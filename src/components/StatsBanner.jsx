@@ -23,9 +23,9 @@ export default function StatsBanner({ tournament }) {
         <div className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto mb-10">
           
           {/* Top Festival Tag */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-amber-300 text-xs font-bold mb-6 backdrop-blur-md shadow-sm">
-            <Trophy className="w-4 h-4 text-amber-300" />
-            <span className="tracking-wider uppercase">Official Team Selection &amp; Role Allocation Portal</span>
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-amber-300 text-[10px] sm:text-xs font-bold mb-6 backdrop-blur-md shadow-sm max-w-full">
+            <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 flex-shrink-0" />
+            <span className="tracking-wider uppercase truncate">Official Team Selection &amp; Role Allocation Portal</span>
           </div>
 
           {/* Official Umang 2026 Header Showcase Card */}
