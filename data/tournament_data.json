@@ -1,0 +1,329 @@
+{
+  "tournament": {
+    "name": "NEXT IAS Cricket Tournament 2026",
+    "edition": "Annual Championship 2026",
+    "venue": "Delhi Cricket Ground / Sports Complex, New Delhi",
+    "organizerPin": "NEXTIAS2026",
+    "telegramGroupUrl": "https://t.me/+NextIasCricket2026",
+    "totalExpectedPlayers": 108,
+    "rosterSlotsPerTeam": 13,
+    "slotBreakdown": {
+      "batsmen": 5,
+      "allRounders": 4,
+      "bowlers": 4
+    },
+    "reservePoolCapacity": 12
+  },
+  "captains": [
+    {
+      "id": "cap-1",
+      "name": "Aditya Sharma",
+      "role": "Organizer & Captain",
+      "teamId": "team-1",
+      "mobile": "+91 98112 XXXXX"
+    },
+    {
+      "id": "cap-2",
+      "name": "Rohan Verma",
+      "role": "Organizer & Captain",
+      "teamId": "team-2",
+      "mobile": "+91 98223 XXXXX"
+    },
+    {
+      "id": "cap-3",
+      "name": "Kunal Singh",
+      "role": "Volunteer Captain",
+      "teamId": "team-3",
+      "mobile": "+91 98334 XXXXX"
+    },
+    {
+      "id": "cap-4",
+      "name": "Deepak Patel",
+      "role": "Volunteer Captain",
+      "teamId": "team-4",
+      "mobile": "+91 98445 XXXXX"
+    },
+    {
+      "id": "cap-5",
+      "name": "Vikram Chauhan",
+      "role": "Volunteer Captain",
+      "teamId": "team-5",
+      "mobile": "+91 98556 XXXXX"
+    },
+    {
+      "id": "cap-6",
+      "name": "Aman Tripathi",
+      "role": "Volunteer Captain",
+      "teamId": "team-6",
+      "mobile": "+91 98667 XXXXX"
+    },
+    {
+      "id": "cap-7",
+      "name": "Siddharth Rao",
+      "role": "Volunteer Captain",
+      "teamId": "team-7",
+      "mobile": "+91 98778 XXXXX"
+    },
+    {
+      "id": "cap-8",
+      "name": "Harshvardhan",
+      "role": "Volunteer Captain",
+      "teamId": "team-8",
+      "mobile": "+91 98889 XXXXX"
+    },
+    {
+      "id": "cap-9",
+      "name": "Pooja Mishra",
+      "role": "Tournament Co-Director",
+      "teamId": null,
+      "mobile": "+91 98990 XXXXX"
+    },
+    {
+      "id": "cap-10",
+      "name": "Rahul Deshmukh",
+      "role": "Match Referee / Ops Lead",
+      "teamId": null,
+      "mobile": "+91 98001 XXXXX"
+    }
+  ],
+  "teams": [
+    {
+      "id": "team-1",
+      "name": "NEXT IAS Titans",
+      "shortName": "TITANS",
+      "tagline": "Discipline. Dominance. Victory.",
+      "color": "from-red-600 to-rose-900",
+      "accentColor": "#ED1C24",
+      "captainName": "Aditya Sharma (Organizer)",
+      "players": [
+        {
+          "id": "p-cap-1",
+          "name": "Aditya Sharma",
+          "rollNo": "NEXT-ADM-01",
+          "role": "allRounder",
+          "isWicketKeeper": false,
+          "battingStyle": "Right Hand",
+          "bowlingStyle": "Right-arm Medium",
+          "mobile": "9811200001",
+          "whatsapp": "9811200001",
+          "isCaptain": true,
+          "attendance": "Confirmed",
+          "teamId": "team-1",
+          "registeredAt": "2026-10-20T10:00:00.000Z"
+        },
+        {
+          "id": "p-1792738898461-271",
+          "name": "Amit Kumar",
+          "rollNo": "GS-2026-102",
+          "role": "allRounder",
+          "isWicketKeeper": false,
+          "battingStyle": "Right Hand",
+          "bowlingStyle": "Right-arm Medium",
+          "mobile": "9876543210",
+          "whatsapp": "9876543210",
+          "attendance": "Confirmed",
+          "registeredAt": "2026-10-23T07:01:38.461Z",
+          "teamId": "team-1"
+        }
+      ]
+    },
+    {
+      "id": "team-2",
+      "name": "Rajinder Nagar Royals",
+      "shortName": "ROYALS",
+      "tagline": "Class, Grace & Relentless Focus",
+      "color": "from-blue-700 to-indigo-950",
+      "accentColor": "#0267B1",
+      "captainName": "Rohan Verma (Organizer)",
+      "players": [
+        {
+          "id": "p-cap-2",
+          "name": "Rohan Verma",
+          "rollNo": "NEXT-ADM-02",
+          "role": "batsman",
+          "isWicketKeeper": true,
+          "battingStyle": "Right Hand",
+          "bowlingStyle": "None",
+          "mobile": "9822300002",
+          "whatsapp": "9822300002",
+          "isCaptain": true,
+          "attendance": "Confirmed",
+          "teamId": "team-2",
+          "registeredAt": "2026-10-20T10:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "team-3",
+      "name": "Karol Bagh Kings",
+      "shortName": "KINGS",
+      "tagline": "Aggression with Academic Calm",
+      "color": "from-amber-500 to-yellow-800",
+      "accentColor": "#F59E0B",
+      "captainName": "Kunal Singh (Captain)",
+      "players": [
+        {
+          "id": "p-cap-3",
+          "name": "Kunal Singh",
+          "rollNo": "NEXT-VOL-03",
+          "role": "bowler",
+          "isWicketKeeper": false,
+          "battingStyle": "Right Hand",
+          "bowlingStyle": "Right-arm Fast",
+          "mobile": "9833400003",
+          "whatsapp": "9833400003",
+          "isCaptain": true,
+          "attendance": "Confirmed",
+          "teamId": "team-3",
+          "registeredAt": "2026-10-20T10:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "team-4",
+      "name": "Civil Service Strikers",
+      "shortName": "STRIKERS",
+      "tagline": "Precision Bowling & Boundary Blitz",
+      "color": "from-emerald-600 to-teal-900",
+      "accentColor": "#10B981",
+      "captainName": "Deepak Patel (Captain)",
+      "players": [
+        {
+          "id": "p-cap-4",
+          "name": "Deepak Patel",
+          "rollNo": "NEXT-VOL-04",
+          "role": "allRounder",
+          "isWicketKeeper": false,
+          "battingStyle": "Left Hand",
+          "bowlingStyle": "Right-arm Off Spin",
+          "mobile": "9844500004",
+          "whatsapp": "9844500004",
+          "isCaptain": true,
+          "attendance": "Confirmed",
+          "teamId": "team-4",
+          "registeredAt": "2026-10-20T10:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "team-5",
+      "name": "Dholpur House Knights",
+      "shortName": "KNIGHTS",
+      "tagline": "Interview Ready, Pitch Steady",
+      "color": "from-purple-600 to-violet-950",
+      "accentColor": "#7C3AED",
+      "captainName": "Vikram Chauhan (Captain)",
+      "players": [
+        {
+          "id": "p-cap-5",
+          "name": "Vikram Chauhan",
+          "rollNo": "NEXT-VOL-05",
+          "role": "batsman",
+          "isWicketKeeper": false,
+          "battingStyle": "Right Hand",
+          "bowlingStyle": "None",
+          "mobile": "9855600005",
+          "whatsapp": "9855600005",
+          "isCaptain": true,
+          "attendance": "Confirmed",
+          "teamId": "team-5",
+          "registeredAt": "2026-10-20T10:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "team-6",
+      "name": "LBSNAA Challengers",
+      "shortName": "CHALLENGERS",
+      "tagline": "Destination Mussoorie, Target Cup",
+      "color": "from-cyan-600 to-blue-900",
+      "accentColor": "#0891B2",
+      "captainName": "Aman Tripathi (Captain)",
+      "players": [
+        {
+          "id": "p-cap-6",
+          "name": "Aman Tripathi",
+          "rollNo": "NEXT-VOL-06",
+          "role": "bowler",
+          "isWicketKeeper": false,
+          "battingStyle": "Right Hand",
+          "bowlingStyle": "Left-arm Orthodox",
+          "mobile": "9866700006",
+          "whatsapp": "9866700006",
+          "isCaptain": true,
+          "attendance": "Confirmed",
+          "teamId": "team-6",
+          "registeredAt": "2026-10-20T10:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "team-7",
+      "name": "Old Rajinder Mavericks",
+      "shortName": "MAVERICKS",
+      "tagline": "Midnight Revisions & Matchwinners",
+      "color": "from-rose-600 to-pink-950",
+      "accentColor": "#E11D48",
+      "captainName": "Siddharth Rao (Captain)",
+      "players": [
+        {
+          "id": "p-cap-7",
+          "name": "Siddharth Rao",
+          "rollNo": "NEXT-VOL-07",
+          "role": "allRounder",
+          "isWicketKeeper": false,
+          "battingStyle": "Right Hand",
+          "bowlingStyle": "Right-arm Fast Medium",
+          "mobile": "9877800007",
+          "whatsapp": "9877800007",
+          "isCaptain": true,
+          "attendance": "Confirmed",
+          "teamId": "team-7",
+          "registeredAt": "2026-10-20T10:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "team-8",
+      "name": "Prelims Powerhitters",
+      "shortName": "POWERHITTERS",
+      "tagline": "Clearing Cut-offs & Clearing Boundaries",
+      "color": "from-orange-600 to-amber-900",
+      "accentColor": "#EA580C",
+      "captainName": "Harshvardhan (Captain)",
+      "players": [
+        {
+          "id": "p-cap-8",
+          "name": "Harshvardhan",
+          "rollNo": "NEXT-VOL-08",
+          "role": "batsman",
+          "isWicketKeeper": true,
+          "battingStyle": "Left Hand",
+          "bowlingStyle": "None",
+          "mobile": "9888900008",
+          "whatsapp": "9888900008",
+          "isCaptain": true,
+          "attendance": "Confirmed",
+          "teamId": "team-8",
+          "registeredAt": "2026-10-20T10:00:00.000Z"
+        }
+      ]
+    }
+  ],
+  "reservePool": [
+    {
+      "id": "res-1",
+      "name": "Arjun Nair",
+      "rollNo": "GS-2026-089",
+      "role": "allRounder",
+      "isWicketKeeper": false,
+      "battingStyle": "Right Hand",
+      "bowlingStyle": "Right-arm Leg Break",
+      "mobile": "9800000001",
+      "whatsapp": "9800000001",
+      "teamId": "reserve",
+      "attendance": "Confirmed",
+      "registeredAt": "2026-10-21T12:00:00.000Z"
+    }
+  ]
+}
