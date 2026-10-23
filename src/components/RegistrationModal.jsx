@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, CheckCircle2, AlertTriangle, Trophy, Sparkles, User, Lock, Shield, Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, CheckCircle2, AlertTriangle, Trophy, Sparkles, User, Lock, Shield, Check, ArrowLeft } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function RegistrationModal({
@@ -26,6 +26,24 @@ export default function RegistrationModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successResult, setSuccessResult] = useState(null);
+
+  const resetAndClose = () => {
+    setSuccessResult(null);
+    setError('');
+    onClose();
+  };
+
+  // Close modal when pressing Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        resetAndClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -91,15 +109,15 @@ export default function RegistrationModal({
     }
   };
 
-  const resetAndClose = () => {
-    setSuccessResult(null);
-    setError('');
-    onClose();
-  };
-
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div 
+      onClick={resetAndClose}
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150 my-auto"
+      >
         
         {/* Header */}
         <div className="bg-gradient-to-r from-brand-navy via-slate-900 to-brand-navy-dark text-white p-6 relative">
@@ -471,12 +489,12 @@ export default function RegistrationModal({
               )}
             </div>
 
-            {/* Submit CTA */}
-            <div className="pt-2">
+            {/* Action Buttons: Submit & Close Form */}
+            <div className="pt-2 space-y-2.5">
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-brand-red to-red-700 hover:from-red-700 hover:to-brand-red text-white text-xs sm:text-sm font-bold shadow-md shadow-brand-red/30 transition flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-brand-red to-red-700 hover:from-red-700 hover:to-brand-red text-white text-xs sm:text-sm font-bold shadow-md shadow-brand-red/30 transition flex items-center justify-center gap-2 transform active:translate-y-0.5"
               >
                 {loading ? (
                   <span>Checking Slots & Submitting...</span>
@@ -486,6 +504,16 @@ export default function RegistrationModal({
                     <span>Confirm Registration & Join Team</span>
                   </>
                 )}
+              </button>
+
+              {/* Close Form / Back to Home Button at bottom of form */}
+              <button
+                type="button"
+                onClick={resetAndClose}
+                className="w-full py-2.5 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 hover:text-slate-900 text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 shadow-2xs active:bg-slate-200"
+              >
+                <ArrowLeft className="w-4 h-4 text-slate-500" />
+                <span>Close Form &amp; Return to Home</span>
               </button>
             </div>
 
