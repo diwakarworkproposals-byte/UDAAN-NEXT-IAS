@@ -115,7 +115,8 @@ export default function App() {
       <Header
         onOpenRegister={handleOpenGeneralRegister}
         onOpenAdmin={() => setIsAdminOpen(true)}
-        onOpenTelegram={() => setActiveTab('telegram')}
+        onOpenTelegram={() => handleTabChange('telegram')}
+        telegramUrl={data.tournament?.telegramGroupUrl || 'https://t.me/+MgD-vhGBGSgzOWI9'}
         stats={data.tournament}
         isAdminLoggedIn={!!sessionStorage.getItem('next_ias_organizer_pin')}
       />
