@@ -252,7 +252,7 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
                 </span>
               </div>
               <p className="text-xs text-slate-300">
-                100% Student Contact Directory • Attendance Tracker • Dynamic Squad Re-balancing
+                NEXT IAS Umang 2026 (Sports &amp; Inspiration Meet) • 100% Student Contact Directory • Attendance Tracker
               </p>
             </div>
           </div>

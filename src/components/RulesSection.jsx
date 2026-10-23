@@ -15,7 +15,7 @@ export default function RulesSection() {
               Tournament Roster Architecture & Official Rules
             </h2>
             <p className="text-xs text-slate-500">
-              Approved guidelines for NEXT IAS Cricket Tournament 2026
+              Approved guidelines for NEXT IAS Umang 2026 Cricket Tournament (Sports &amp; Inspiration Meet)
             </p>
           </div>
         </div>

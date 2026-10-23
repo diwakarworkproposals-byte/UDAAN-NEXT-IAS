@@ -116,13 +116,13 @@ export default function RegistrationModal({
           </button>
           <div className="flex items-center gap-2 text-brand-gold text-xs font-bold uppercase tracking-wider mb-1">
             <Trophy className="w-4 h-4" />
-            <span>NEXT IAS Cricket League 2026</span>
+            <span>NEXT IAS Umang 2026 • Cricket League</span>
           </div>
           <h2 className="text-2xl font-black font-heading tracking-tight">
-            Player Registration & Team Allocation
+            Player Registration &amp; Team Allocation
           </h2>
           <p className="text-xs text-slate-300 mt-1">
-            Select your preferred team, playing role, and match day availability.
+            Sports &amp; Inspiration Meet • Select your preferred team, playing role, and match day availability.
           </p>
         </div>
 

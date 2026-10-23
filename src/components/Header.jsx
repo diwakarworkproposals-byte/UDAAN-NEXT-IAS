@@ -1,5 +1,6 @@
 import React from 'react';
 import { Trophy, Shield, UserCheck, Lock, ExternalLink, Users } from 'lucide-react';
+import umangLogo from '../assets/umang-2026-logo.jpg';
 
 export default function Header({ onOpenRegister, onOpenAdmin, onOpenTelegram, stats, isAdminLoggedIn }) {
   return (
@@ -9,20 +10,26 @@ export default function Header({ onOpenRegister, onOpenAdmin, onOpenTelegram, st
           
           {/* Logo & Institute Branding */}
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-brand-red to-brand-red-dark flex items-center justify-center text-white shadow-md shadow-brand-red/20 font-black text-xl">
-              🏏
+            <div className="relative h-12 sm:h-14 w-auto max-w-[150px] sm:max-w-[180px] bg-white rounded-xl p-1 border border-slate-200/90 shadow-sm flex items-center justify-center overflow-hidden transition-transform hover:scale-[1.02]">
+              <img
+                src={umangLogo}
+                alt="NEXT IAS Umang 2026 Logo"
+                className="h-full w-auto object-contain mix-blend-multiply"
+              />
+              {/* Clean corner mask */}
+              <div className="absolute bottom-0 right-0 w-6 h-3 bg-white" />
             </div>
-            <div>
+            <div className="border-l border-slate-200 pl-3 hidden sm:block">
               <div className="flex items-center gap-2">
-                <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-brand-navy font-heading">
-                  NEXT <span className="text-brand-red">IAS</span>
+                <span className="text-base sm:text-lg font-black tracking-tight text-brand-navy font-heading leading-tight">
+                  CRICKET LEAGUE <span className="text-brand-red">2026</span>
                 </span>
-                <span className="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-amber-300 uppercase tracking-wider">
-                  Cricket 2026
+                <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-300 uppercase tracking-wider">
+                  Official
                 </span>
               </div>
-              <p className="text-xs text-slate-500 font-medium hidden sm:block">
-                Annual Premier Institute Tournament • 8 Teams • 108 Players
+              <p className="text-[11px] text-slate-500 font-semibold tracking-wide uppercase mt-0.5">
+                Sports &amp; Inspiration Meet • 8 Teams • 108 Players
               </p>
             </div>
           </div>

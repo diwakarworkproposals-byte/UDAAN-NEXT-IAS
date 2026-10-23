@@ -1,10 +1,10 @@
 // API service with automatic fallback to localStorage for zero-config static hosting
-const STORAGE_KEY = 'next_ias_cricket_tournament_data_v5';
+const STORAGE_KEY = 'next_ias_cricket_tournament_data_v6';
 
 const INITIAL_FALLBACK_DATA = {
   tournament: {
-    name: "NEXT IAS Cricket Tournament 2026",
-    edition: "Annual Championship 2026",
+    name: "NEXT IAS Umang 2026",
+    edition: "Cricket Tournament • Sports & Inspiration Meet",
     venue: "Delhi Sports Complex / Ground, New Delhi",
     organizerPin: "NEXTIAS2026",
     telegramGroupUrl: "https://t.me/+NextIasCricket2026",

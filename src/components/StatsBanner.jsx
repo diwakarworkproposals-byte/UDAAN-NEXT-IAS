@@ -1,5 +1,6 @@
 import React from 'react';
-import { Users, Trophy, ShieldCheck, UserCheck, Flame, Info } from 'lucide-react';
+import { Users, Trophy, ShieldCheck, UserCheck, Flame, Info, Sparkles } from 'lucide-react';
+import umangLogo from '../assets/umang-2026-logo.jpg';
 
 export default function StatsBanner({ tournament }) {
   const totalSlots = tournament.totalSlotsAcrossTeams || 104;
@@ -14,26 +15,50 @@ export default function StatsBanner({ tournament }) {
     <div className="bg-gradient-to-br from-brand-navy via-slate-900 to-brand-navy-dark text-white pt-10 pb-12 px-4 sm:px-6 lg:px-8 border-b border-slate-800 cricket-mesh relative overflow-hidden">
       {/* Background Accent glow */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-brand-red/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-brand-gold/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         
-        {/* Banner Hero Title */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-brand-gold text-xs font-semibold mb-4 backdrop-blur-sm">
-            <Trophy className="w-3.5 h-3.5 text-brand-gold" />
-            <span>Official Team Selection & Role Allocation Portal</span>
+        {/* Banner Hero Showcase */}
+        <div className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto mb-10">
+          
+          {/* Top Festival Tag */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-amber-300 text-xs font-bold mb-6 backdrop-blur-md shadow-sm">
+            <Trophy className="w-4 h-4 text-amber-300" />
+            <span className="tracking-wider uppercase">Official Team Selection &amp; Role Allocation Portal</span>
           </div>
+
+          {/* Official Umang 2026 Header Showcase Card */}
+          <div className="relative group max-w-md sm:max-w-lg w-full mb-6 mx-auto">
+            <div className="absolute -inset-1 bg-gradient-to-r from-red-600 via-sky-400 to-amber-400 rounded-3xl blur-lg opacity-40 group-hover:opacity-70 transition duration-700"></div>
+            <div className="relative bg-[#fcfbfa] rounded-2xl p-2 sm:p-3 shadow-2xl border border-white/50 overflow-hidden">
+              <div className="relative w-full overflow-hidden rounded-xl">
+                <img
+                  src={umangLogo}
+                  alt="NEXT IAS Umang 2026 - Sports &amp; Inspiration Meet"
+                  className="w-full h-auto block select-none"
+                />
+                {/* Seamless corner mask to eliminate paper scribble note */}
+                <div className="absolute bottom-0 right-0 w-[22%] h-[20%] bg-[#faf8f7] rounded-br-xl pointer-events-none" />
+              </div>
+            </div>
+          </div>
+
+          {/* Cricket Championship Title */}
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight font-heading leading-tight text-white">
-            NEXT IAS Cricket League <span className="text-brand-red">2026</span>
+            Cricket League <span className="text-brand-gold">2026</span>
           </h1>
-          <p className="mt-3 text-slate-300 text-sm sm:text-base leading-relaxed">
-            Welcome students & faculty! 8 premier teams are competing with 13 fixed squad slots each (5 Batsmen, 4 All-rounders, 4 Bowlers). Led by 10 student volunteers & institute organizers as on-field captains.
+          <p className="mt-2 text-sm sm:text-base font-bold text-sky-300 uppercase tracking-widest font-heading">
+            Sports &amp; Inspiration Meet • Knockout Championship
+          </p>
+
+          <p className="mt-3 text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
+            Welcome NEXT IAS aspirants &amp; faculty! 8 premier teams competing with 13 fixed squad slots each (5 Batsmen, 4 All-rounders, 4 Bowlers). Led by 8 designated student captains and 2 organizers.
           </p>
 
           {/* Privacy Guarantee Pill */}
-          <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-xs font-medium">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <div className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-xs font-medium backdrop-blur-sm">
+            <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
             <span>Student Privacy Protected: Contact numbers are never shared publicly or visible to other candidates.</span>
           </div>
         </div>

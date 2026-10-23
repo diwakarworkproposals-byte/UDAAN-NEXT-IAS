@@ -44,7 +44,7 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950 text-brand-gold text-xs font-black uppercase tracking-wider mb-2">
                   <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
-                  <span>NEXT IAS Cricket League 2026 Champion</span>
+                  <span>NEXT IAS Umang 2026 Champion</span>
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-black font-heading tracking-tight text-slate-950">
                   {championTeam.name}
