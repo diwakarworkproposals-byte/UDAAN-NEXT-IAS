@@ -229,7 +229,7 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                   
                   {/* Team 1 */}
                   <div className={`p-3.5 rounded-2xl border transition flex items-center justify-between ${
-                    match.winnerTeamId === match.team1Id
+                    Boolean(match.winnerTeamId) && match.winnerTeamId === match.team1Id
                       ? 'bg-amber-50/90 border-amber-300 ring-1 ring-amber-300'
                       : isCompleted && match.winnerTeamId && match.winnerTeamId !== match.team1Id
                       ? 'bg-slate-50/60 border-slate-200 opacity-60'
@@ -244,7 +244,7 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                           <span className="font-bold text-sm text-slate-900 font-heading">
                             {match.team1Name || 'Winner TBD'}
                           </span>
-                          {match.winnerTeamId === match.team1Id && (
+                          {Boolean(match.winnerTeamId) && match.winnerTeamId === match.team1Id && (
                             <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 text-[10px] font-black uppercase">
                               <span>👑 WINNER</span>
                             </span>
@@ -277,7 +277,7 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
 
                   {/* Team 2 */}
                   <div className={`p-3.5 rounded-2xl border transition flex items-center justify-between ${
-                    match.winnerTeamId === match.team2Id
+                    Boolean(match.winnerTeamId) && match.winnerTeamId === match.team2Id
                       ? 'bg-amber-50/90 border-amber-300 ring-1 ring-amber-300'
                       : isCompleted && match.winnerTeamId && match.winnerTeamId !== match.team2Id
                       ? 'bg-slate-50/60 border-slate-200 opacity-60'
@@ -292,7 +292,7 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                           <span className="font-bold text-sm text-slate-900 font-heading">
                             {match.team2Name || 'Winner TBD'}
                           </span>
-                          {match.winnerTeamId === match.team2Id && (
+                          {Boolean(match.winnerTeamId) && match.winnerTeamId === match.team2Id && (
                             <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 text-[10px] font-black uppercase">
                               <span>👑 WINNER</span>
                             </span>
@@ -379,14 +379,14 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                     </div>
 
                     <div className={`p-1.5 rounded-lg flex items-center justify-between font-bold ${
-                      m.winnerTeamId === m.team1Id ? 'bg-amber-100 text-amber-950 font-black' : 'text-slate-800'
+                      Boolean(m.winnerTeamId) && m.winnerTeamId === m.team1Id ? 'bg-amber-100 text-amber-950 font-black' : 'text-slate-800'
                     }`}>
                       <span className="truncate max-w-[140px]">{m.team1Name || 'Team 1'}</span>
                       <span className="font-mono text-[11px]">{m.scores?.team1 || ''}</span>
                     </div>
 
                     <div className={`p-1.5 rounded-lg flex items-center justify-between font-bold ${
-                      m.winnerTeamId === m.team2Id ? 'bg-amber-100 text-amber-950 font-black' : 'text-slate-800'
+                      Boolean(m.winnerTeamId) && m.winnerTeamId === m.team2Id ? 'bg-amber-100 text-amber-950 font-black' : 'text-slate-800'
                     }`}>
                       <span className="truncate max-w-[140px]">{m.team2Name || 'Team 2'}</span>
                       <span className="font-mono text-[11px]">{m.scores?.team2 || ''}</span>
@@ -421,14 +421,14 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                     </div>
 
                     <div className={`p-2 rounded-lg flex items-center justify-between font-bold ${
-                      m.winnerTeamId === m.team1Id ? 'bg-amber-100 text-amber-950 font-black' : 'text-slate-800'
+                      Boolean(m.winnerTeamId) && m.winnerTeamId === m.team1Id ? 'bg-amber-100 text-amber-950 font-black' : 'text-slate-800'
                     }`}>
                       <span className="truncate max-w-[150px]">{m.team1Name || 'Winner QF'}</span>
                       <span className="font-mono text-[11px]">{m.scores?.team1 || ''}</span>
                     </div>
 
                     <div className={`p-2 rounded-lg flex items-center justify-between font-bold ${
-                      m.winnerTeamId === m.team2Id ? 'bg-amber-100 text-amber-950 font-black' : 'text-slate-800'
+                      Boolean(m.winnerTeamId) && m.winnerTeamId === m.team2Id ? 'bg-amber-100 text-amber-950 font-black' : 'text-slate-800'
                     }`}>
                       <span className="truncate max-w-[150px]">{m.team2Name || 'Winner QF'}</span>
                       <span className="font-mono text-[11px]">{m.scores?.team2 || ''}</span>
@@ -460,7 +460,7 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                     </div>
 
                     <div className={`p-2.5 rounded-xl flex items-center justify-between font-bold border ${
-                      m.winnerTeamId === m.team1Id ? 'bg-amber-100 border-amber-300 text-amber-950 font-black' : 'bg-white border-slate-200 text-slate-800'
+                      Boolean(m.winnerTeamId) && m.winnerTeamId === m.team1Id ? 'bg-amber-100 border-amber-300 text-amber-950 font-black' : 'bg-white border-slate-200 text-slate-800'
                     }`}>
                       <span className="truncate max-w-[160px]">{m.team1Name || 'Winner SF 1'}</span>
                       <span className="font-mono text-xs">{m.scores?.team1 || ''}</span>
@@ -469,7 +469,7 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                     <div className="text-center text-[10px] font-black text-slate-400 uppercase">VS</div>
 
                     <div className={`p-2.5 rounded-xl flex items-center justify-between font-bold border ${
-                      m.winnerTeamId === m.team2Id ? 'bg-amber-100 border-amber-300 text-amber-950 font-black' : 'bg-white border-slate-200 text-slate-800'
+                      Boolean(m.winnerTeamId) && m.winnerTeamId === m.team2Id ? 'bg-amber-100 border-amber-300 text-amber-950 font-black' : 'bg-white border-slate-200 text-slate-800'
                     }`}>
                       <span className="truncate max-w-[160px]">{m.team2Name || 'Winner SF 2'}</span>
                       <span className="font-mono text-xs">{m.scores?.team2 || ''}</span>
