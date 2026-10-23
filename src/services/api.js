@@ -128,11 +128,21 @@ const INITIAL_FALLBACK_DATA = {
   ]
 };
 
+function isStaticHosting() {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname;
+  return host.includes('github.io') || host.includes('pages.dev') || host.includes('netlify.app') || window.location.protocol === 'file:';
+}
+
 function getLocalData() {
+  if (typeof window === 'undefined') return INITIAL_FALLBACK_DATA;
   const local = localStorage.getItem(STORAGE_KEY);
   if (local) {
     try {
-      return JSON.parse(local);
+      const parsed = JSON.parse(local);
+      if (parsed && parsed.teams && parsed.teams.length > 0) {
+        return parsed;
+      }
     } catch (e) {
       console.warn("Error parsing local storage data, reverting to defaults", e);
     }
@@ -142,7 +152,9 @@ function getLocalData() {
 }
 
 function saveLocalData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
 }
 
 function computeTeamStats(team) {
@@ -166,39 +178,11 @@ function computeTeamStats(team) {
   };
 }
 
-export const api = {
-  // Fetch public data (safe, stripped of student phone numbers)
-  async getPublicData() {
-    try {
-      const res = await fetch('/api/public-data');
-      if (res.ok) {
-        return await res.json();
-      }
-    } catch (err) {
-      // Backend not running (e.g. static site preview) -> use local storage
-      console.log('Using local client storage fallback for public data');
-    }
-
-    const data = getLocalData();
-    const sanitizedTeams = data.teams.map(team => ({
-      ...team,
-      stats: computeTeamStats(team),
-      players: (team.players || []).map(p => ({
-        id: p.id,
-        name: p.name,
-        rollNo: p.rollNo,
-        role: p.role,
-        isWicketKeeper: !!p.isWicketKeeper,
-        battingStyle: p.battingStyle || 'Right Hand',
-        bowlingStyle: p.bowlingStyle || 'None',
-        isCaptain: !!p.isCaptain,
-        attendance: p.attendance || 'Pending',
-        teamId: p.teamId,
-        registeredAt: p.registeredAt
-      }))
-    }));
-
-    const sanitizedReserve = (data.reservePool || []).map(p => ({
+function formatSanitizedData(data) {
+  const sanitizedTeams = (data.teams || []).map(team => ({
+    ...team,
+    stats: computeTeamStats(team),
+    players: (team.players || []).map(p => ({
       id: p.id,
       name: p.name,
       rollNo: p.rollNo,
@@ -206,160 +190,203 @@ export const api = {
       isWicketKeeper: !!p.isWicketKeeper,
       battingStyle: p.battingStyle || 'Right Hand',
       bowlingStyle: p.bowlingStyle || 'None',
+      isCaptain: !!p.isCaptain,
       attendance: p.attendance || 'Pending',
+      teamId: p.teamId,
       registeredAt: p.registeredAt
-    }));
+    }))
+  }));
 
-    const totalAssignedPlayers = sanitizedTeams.reduce((sum, t) => sum + t.players.length, 0);
+  const sanitizedReserve = (data.reservePool || []).map(p => ({
+    id: p.id,
+    name: p.name,
+    rollNo: p.rollNo,
+    role: p.role,
+    isWicketKeeper: !!p.isWicketKeeper,
+    battingStyle: p.battingStyle || 'Right Hand',
+    bowlingStyle: p.bowlingStyle || 'None',
+    attendance: p.attendance || 'Pending',
+    registeredAt: p.registeredAt
+  }));
 
-    return {
-      tournament: {
-        ...data.tournament,
-        totalAssignedPlayers,
-        totalReserve: sanitizedReserve.length,
-        totalRegistered: totalAssignedPlayers + sanitizedReserve.length,
-        totalSlotsAcrossTeams: 104
-      },
-      teams: sanitizedTeams,
-      reservePool: sanitizedReserve,
-      captainsList: data.captains
-    };
+  const totalAssignedPlayers = sanitizedTeams.reduce((sum, t) => sum + (t.players ? t.players.length : 0), 0);
+
+  return {
+    tournament: {
+      ...data.tournament,
+      totalAssignedPlayers,
+      totalReserve: sanitizedReserve.length,
+      totalRegistered: totalAssignedPlayers + sanitizedReserve.length,
+      totalSlotsAcrossTeams: 104
+    },
+    teams: sanitizedTeams,
+    reservePool: sanitizedReserve,
+    captainsList: data.captains || []
+  };
+}
+
+export const api = {
+  // Fetch public data (safe, stripped of student phone numbers)
+  async getPublicData() {
+    if (isStaticHosting()) {
+      return formatSanitizedData(getLocalData());
+    }
+
+    try {
+      const res = await fetch('/api/public-data');
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.log('Using local client storage fallback for public data');
+    }
+
+    return formatSanitizedData(getLocalData());
   },
 
   // Register student
   async register(registrationData) {
-    try {
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(registrationData)
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Registration failed');
-      return data;
-    } catch (err) {
-      if (err.message && !err.message.includes('Failed to fetch')) {
-        throw err;
+    if (!isStaticHosting()) {
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(registrationData)
+        });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (err) {
+        // fall through to local storage
       }
-      // Offline / LocalStorage fallback
-      const data = getLocalData();
-      const cleanMobile = String(registrationData.mobile).trim().replace(/\D/g, '').slice(-10);
+    }
 
-      // Check duplicates
-      let duplicate = false;
-      data.teams.forEach(t => {
-        if (t.players.some(p => String(p.mobile).slice(-10) === cleanMobile)) duplicate = true;
-      });
-      if (data.reservePool.some(p => String(p.mobile).slice(-10) === cleanMobile)) duplicate = true;
+    // Static Hosting / LocalStorage handling
+    const data = getLocalData();
+    const cleanMobile = String(registrationData.mobile).trim().replace(/\D/g, '').slice(-10);
 
-      if (duplicate) {
-        throw new Error('This mobile number is already registered. Please contact organizers.');
-      }
+    // Check duplicates
+    let duplicate = false;
+    (data.teams || []).forEach(t => {
+      if ((t.players || []).some(p => String(p.mobile).slice(-10) === cleanMobile)) duplicate = true;
+    });
+    if ((data.reservePool || []).some(p => String(p.mobile).slice(-10) === cleanMobile)) duplicate = true;
 
-      const newPlayer = {
-        id: 'p-' + Date.now(),
-        name: registrationData.name,
-        rollNo: registrationData.rollNo || 'N/A',
-        role: registrationData.role,
-        isWicketKeeper: !!registrationData.isWicketKeeper,
-        battingStyle: registrationData.battingStyle || 'Right Hand',
-        bowlingStyle: registrationData.bowlingStyle || 'None',
-        mobile: cleanMobile,
-        whatsapp: registrationData.whatsapp || cleanMobile,
-        attendance: 'Confirmed',
-        registeredAt: new Date().toISOString()
-      };
+    if (duplicate) {
+      throw new Error('This mobile number is already registered. Please contact organizers.');
+    }
 
-      if (registrationData.preferredTeamId === 'reserve') {
-        newPlayer.teamId = 'reserve';
-        data.reservePool.push(newPlayer);
-        saveLocalData(data);
-        return { success: true, message: 'Registered into Central Reserve Pool!', player: newPlayer };
-      }
+    const newPlayer = {
+      id: 'p-' + Date.now(),
+      name: registrationData.name,
+      rollNo: registrationData.rollNo || 'N/A',
+      role: registrationData.role,
+      isWicketKeeper: !!registrationData.isWicketKeeper,
+      battingStyle: registrationData.battingStyle || 'Right Hand',
+      bowlingStyle: registrationData.bowlingStyle || 'None',
+      mobile: cleanMobile,
+      whatsapp: registrationData.whatsapp || cleanMobile,
+      attendance: 'Confirmed',
+      registeredAt: new Date().toISOString()
+    };
 
-      const team = data.teams.find(t => t.id === registrationData.preferredTeamId);
-      if (!team) throw new Error('Selected team not found');
+    if (registrationData.preferredTeamId === 'reserve') {
+      newPlayer.teamId = 'reserve';
+      data.reservePool.push(newPlayer);
+      saveLocalData(data);
+      return { success: true, message: 'Registered into Central Reserve Pool!', player: newPlayer, assignedTo: 'Central Reserve Pool' };
+    }
 
-      const stats = computeTeamStats(team);
-      let available = false;
-      if (registrationData.role === 'batsman' && stats.available.batsmen > 0) available = true;
-      if (registrationData.role === 'allRounder' && stats.available.allRounders > 0) available = true;
-      if (registrationData.role === 'bowler' && stats.available.bowlers > 0) available = true;
+    const team = data.teams.find(t => t.id === registrationData.preferredTeamId);
+    if (!team) throw new Error('Selected team not found');
 
-      if (available) {
-        newPlayer.teamId = team.id;
-        team.players.push(newPlayer);
-        saveLocalData(data);
-        return { success: true, message: `Successfully registered for ${team.name}!`, player: newPlayer, assignedTo: team.name };
-      } else if (registrationData.joinReserveIfFull) {
-        newPlayer.teamId = 'reserve';
-        data.reservePool.push(newPlayer);
-        saveLocalData(data);
-        return { success: true, message: `Selected slot was full. Placed in Central Reserve Pool.`, player: newPlayer, assignedTo: 'Central Reserve Pool' };
-      } else {
-        throw new Error(`The ${registrationData.role} slot in ${team.name} is full.`);
-      }
+    const stats = computeTeamStats(team);
+    let available = false;
+    if (registrationData.role === 'batsman' && stats.available.batsmen > 0) available = true;
+    if (registrationData.role === 'allRounder' && stats.available.allRounders > 0) available = true;
+    if (registrationData.role === 'bowler' && stats.available.bowlers > 0) available = true;
+
+    if (available) {
+      newPlayer.teamId = team.id;
+      if (!team.players) team.players = [];
+      team.players.push(newPlayer);
+      saveLocalData(data);
+      return { success: true, message: `Successfully registered for ${team.name}!`, player: newPlayer, assignedTo: team.name };
+    } else if (registrationData.joinReserveIfFull) {
+      newPlayer.teamId = 'reserve';
+      data.reservePool.push(newPlayer);
+      saveLocalData(data);
+      return { success: true, message: `Selected slot was full. Placed in Central Reserve Pool.`, player: newPlayer, assignedTo: 'Central Reserve Pool' };
+    } else {
+      throw new Error(`The ${registrationData.role} slot in ${team.name} is full.`);
     }
   },
 
   // Admin login check
   async adminLogin(pin) {
-    try {
-      const res = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin })
-      });
-      if (res.ok) return true;
-    } catch (e) {
-      // offline fallback
-      return pin === 'NEXTIAS2026';
+    if (!isStaticHosting()) {
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin })
+        });
+        if (res.ok) return true;
+      } catch (e) {
+        // offline fallback
+      }
     }
-    return pin === 'NEXTIAS2026';
+    const data = getLocalData();
+    const validPin = data.tournament?.organizerPin || 'NEXTIAS2026';
+    return pin === validPin;
   },
 
   // Admin fetch full data (including confidential student contacts)
   async getAdminData(pin) {
-    try {
-      const res = await fetch('/api/admin/all-data', {
-        headers: { 'x-organizer-pin': pin }
-      });
-      if (res.ok) {
-        return await res.json();
+    if (!isStaticHosting()) {
+      try {
+        const res = await fetch('/api/admin/all-data', {
+          headers: { 'x-organizer-pin': pin }
+        });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (e) {
+        // fallback
       }
-    } catch (e) {
-      console.log('Using local client storage fallback for admin data');
     }
     return getLocalData();
   },
 
   // Admin update player (reassign team, role, attendance)
   async updatePlayer(pin, updatePayload) {
-    try {
-      const res = await fetch('/api/admin/update-player', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-organizer-pin': pin
-        },
-        body: JSON.stringify(updatePayload)
-      });
-      if (res.ok) return await res.json();
-    } catch (e) {
-      // fallback
+    if (!isStaticHosting()) {
+      try {
+        const res = await fetch('/api/admin/update-player', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-organizer-pin': pin
+          },
+          body: JSON.stringify(updatePayload)
+        });
+        if (res.ok) return await res.json();
+      } catch (e) {
+        // fallback
+      }
     }
 
     const data = getLocalData();
     let player = null;
     for (const t of data.teams) {
-      const idx = t.players.findIndex(p => p.id === updatePayload.playerId);
+      const idx = (t.players || []).findIndex(p => p.id === updatePayload.playerId);
       if (idx !== -1) {
         player = t.players.splice(idx, 1)[0];
         break;
       }
     }
     if (!player) {
-      const idx = data.reservePool.findIndex(p => p.id === updatePayload.playerId);
+      const idx = (data.reservePool || []).findIndex(p => p.id === updatePayload.playerId);
       if (idx !== -1) {
         player = data.reservePool.splice(idx, 1)[0];
       }
@@ -377,6 +404,7 @@ export const api = {
         const team = data.teams.find(t => t.id === updatePayload.targetTeamId);
         if (team) {
           player.teamId = team.id;
+          if (!team.players) team.players = [];
           team.players.push(player);
         }
       }
