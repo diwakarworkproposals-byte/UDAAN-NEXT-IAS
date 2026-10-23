@@ -18,13 +18,13 @@ export default function TeamCard({ team, onSelectTeam }) {
   const getRoleBadge = (role) => {
     switch (role) {
       case 'batsman':
-        return <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded">🏏 Batsman</span>;
+        return <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-1 py-0.2 rounded whitespace-nowrap">🏏 Bat</span>;
       case 'allRounder':
-        return <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">⚡ All-Rounder</span>;
+        return <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1 py-0.2 rounded whitespace-nowrap">⚡ AR</span>;
       case 'bowler':
-        return <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">🎯 Bowler</span>;
+        return <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1 py-0.2 rounded whitespace-nowrap">🎯 Bowl</span>;
       default:
-        return <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">{role}</span>;
+        return <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-1 py-0.2 rounded">{role}</span>;
     }
   };
 
