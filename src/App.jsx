@@ -22,7 +22,23 @@ export default function App() {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [preselectedTeamId, setPreselectedTeamId] = useState(null);
-  const [activeTab, setActiveTab] = useState('teams');
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.replace('#', '');
+      if (['teams', 'fixtures', 'reserve', 'telegram', 'rules'].includes(hash)) {
+        return hash;
+      }
+    }
+    return 'teams';
+  });
+
+  const handleTabChange = (tabName) => {
+    setActiveTab(tabName);
+    if (typeof window !== 'undefined') {
+      window.location.hash = tabName;
+    }
+  };
+
   const [studentSearchQuery, setStudentSearchQuery] = useState('');
   const [searchResult, setSearchResult] = useState(null);
 
@@ -116,7 +132,7 @@ export default function App() {
           {/* Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
             <button
-              onClick={() => setActiveTab('teams')}
+              onClick={() => handleTabChange('teams')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 ${
                 activeTab === 'teams'
                   ? 'bg-brand-navy text-white shadow-sm'
@@ -127,7 +143,7 @@ export default function App() {
             </button>
 
             <button
-              onClick={() => setActiveTab('fixtures')}
+              onClick={() => handleTabChange('fixtures')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 flex items-center gap-1.5 ${
                 activeTab === 'fixtures'
                   ? 'bg-brand-navy text-white shadow-sm'
@@ -141,7 +157,7 @@ export default function App() {
             </button>
 
             <button
-              onClick={() => setActiveTab('reserve')}
+              onClick={() => handleTabChange('reserve')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 ${
                 activeTab === 'reserve'
                   ? 'bg-brand-navy text-white shadow-sm'
@@ -152,7 +168,7 @@ export default function App() {
             </button>
 
             <button
-              onClick={() => setActiveTab('telegram')}
+              onClick={() => handleTabChange('telegram')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 ${
                 activeTab === 'telegram'
                   ? 'bg-brand-navy text-white shadow-sm'
@@ -163,7 +179,7 @@ export default function App() {
             </button>
 
             <button
-              onClick={() => setActiveTab('rules')}
+              onClick={() => handleTabChange('rules')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 ${
                 activeTab === 'rules'
                   ? 'bg-brand-navy text-white shadow-sm'
