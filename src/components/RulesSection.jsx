@@ -22,40 +22,36 @@ export default function RulesSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           
-          {/* Rule 1: Fixed 13-Player Squad */}
+          {/* Rule 1: Flexible 13-Player Squad */}
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
             <div className="w-8 h-8 rounded-lg bg-red-100 text-brand-red font-bold text-xs flex items-center justify-center mb-3">
               1
             </div>
-            <h4 className="font-bold text-slate-900 text-sm mb-1.5">13-Player Fixed Roster</h4>
+            <h4 className="font-bold text-slate-900 text-sm mb-1.5">13-Player Squad Limit</h4>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Every team has exactly 13 roster spots:
-              <br />• <strong>5 Batsmen</strong>
-              <br />• <strong>4 All-Rounders</strong>
-              <br />• <strong>4 Bowlers</strong>
-              <br />Total across 8 teams: <strong>104 slots</strong>.
+              Every team has a strict limit of <strong>13 players total</strong>. No rigid role slot quotas — teams dynamically record live counts of <strong>Batsmen, All-Rounders, and Bowlers</strong> as students join. Total capacity: 104 slots across 8 teams.
             </p>
           </div>
 
-          {/* Rule 2: Wicketkeeper Selection */}
+          {/* Rule 2: 10-Over Format */}
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
             <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 font-bold text-xs flex items-center justify-center mb-3">
               2
             </div>
-            <h4 className="font-bold text-slate-900 text-sm mb-1.5">Dual-Skill Wicketkeepers</h4>
+            <h4 className="font-bold text-slate-900 text-sm mb-1.5">10-Over Fast Match (T10)</h4>
             <p className="text-xs text-slate-600 leading-relaxed">
-              To preserve the 5-4-4 roster balance, wicketkeeping is tracked as a <strong>special skill badge</strong> rather than a 4th role category. Every team is ensured at least 1-2 qualified keepers among their batsmen or all-rounders.
+              Every match is a high-octane <strong>10 overs per match</strong> knockout clash. Matches run between <strong>09:00 AM – 11:00 AM on 25th October 2026</strong>, culminating in the Grand Finale at 10:25 AM!
             </p>
           </div>
 
-          {/* Rule 3: Playing XI & Rotation */}
+          {/* Rule 3: 4 Pitches Simultaneous */}
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
             <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 font-bold text-xs flex items-center justify-center mb-3">
               3
             </div>
-            <h4 className="font-bold text-slate-900 text-sm mb-1.5">Playing XI & Rotation</h4>
+            <h4 className="font-bold text-slate-900 text-sm mb-1.5">4 Pitches Simultaneous</h4>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Each match features 11 players on field. The remaining 2 players serve as impact substitutes / reserve fielders. Captains rotate squad members across matches to ensure all students get quality game time.
+              With <strong>4 pitches operating simultaneously</strong>, all 4 Quarter-Finals commence together at 09:00 AM. Semi-Finals kick off at 09:45 AM, and the Trophy Final is held on Pitch 1!
             </p>
           </div>
 
@@ -72,7 +68,7 @@ export default function RulesSection() {
               <span className="text-slate-600">Selected from student volunteers & institute organizers. They make tactical decisions, manage bat/bowl orders, and maintain player spirit.</span>
             </div>
             <div className="p-3 bg-white rounded-xl border border-slate-200">
-              <strong className="text-brand-navy block mb-0.5">2 Tournament Directors & Match Referees</strong>
+              <strong className="text-brand-navy block mb-0.5">2 Organizers & Match Referees</strong>
               <span className="text-slate-600">Manage pitch allocations, overs, attendance verification, scorekeeping, and disputes.</span>
             </div>
           </div>

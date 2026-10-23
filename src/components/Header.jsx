@@ -10,14 +10,12 @@ export default function Header({ onOpenRegister, onOpenAdmin, onOpenTelegram, st
           
           {/* Logo & Institute Branding */}
           <div className="flex items-center gap-3">
-            <div className="relative h-12 sm:h-14 w-auto max-w-[150px] sm:max-w-[180px] bg-white rounded-xl p-1 border border-slate-200/90 shadow-sm flex items-center justify-center overflow-hidden transition-transform hover:scale-[1.02]">
+            <div className="h-12 sm:h-14 w-auto max-w-[150px] sm:max-w-[180px] bg-white rounded-xl p-1 border border-slate-200/90 shadow-sm flex items-center justify-center overflow-hidden transition-transform hover:scale-[1.02]">
               <img
                 src={umangLogo}
                 alt="NEXT IAS Umang 2026 Logo"
                 className="h-full w-auto object-contain mix-blend-multiply"
               />
-              {/* Clean corner mask */}
-              <div className="absolute bottom-0 right-0 w-6 h-3 bg-white" />
             </div>
             <div className="border-l border-slate-200 pl-3 hidden sm:block">
               <div className="flex items-center gap-2">

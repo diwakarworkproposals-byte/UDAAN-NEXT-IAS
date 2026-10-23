@@ -54,10 +54,10 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
         sessionStorage.setItem('next_ias_organizer_pin', pin);
         await loadAdminData(pin);
       } else {
-        setLoginError('Incorrect PIN. Default is NEXTIAS2026');
+        setLoginError('Incorrect PIN. Access restricted to tournament organizers.');
       }
     } catch (err) {
-      setLoginError('Authentication failed. Default PIN is NEXTIAS2026');
+      setLoginError('Authentication failed. Please verify your PIN.');
     } finally {
       setLoading(false);
     }
@@ -290,7 +290,7 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
             <form onSubmit={handleLogin} className="space-y-4">
               <input
                 type="password"
-                placeholder="Organizer PIN (e.g. NEXTIAS2026)"
+                placeholder="Enter Organizer PIN"
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
                 className="w-full text-center tracking-widest text-lg font-bold px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-red focus:border-transparent outline-none"
@@ -309,7 +309,7 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
               </button>
 
               <p className="text-[11px] text-slate-400 mt-3">
-                Default PIN: <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-slate-700">NEXTIAS2026</code>
+                Authorized access only • NEXT IAS Sports Committee
               </p>
             </form>
           </div>

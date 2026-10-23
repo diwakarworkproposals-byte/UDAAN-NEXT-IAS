@@ -38,8 +38,6 @@ export default function StatsBanner({ tournament }) {
                   alt="NEXT IAS Umang 2026 - Sports &amp; Inspiration Meet"
                   className="w-full h-auto block select-none"
                 />
-                {/* Seamless corner mask to eliminate paper scribble note */}
-                <div className="absolute bottom-0 right-0 w-[22%] h-[20%] bg-[#faf8f7] rounded-br-xl pointer-events-none" />
               </div>
             </div>
           </div>
@@ -53,7 +51,7 @@ export default function StatsBanner({ tournament }) {
           </p>
 
           <p className="mt-3 text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
-            Welcome NEXT IAS aspirants &amp; faculty! 8 premier teams competing with 13 fixed squad slots each (5 Batsmen, 4 All-rounders, 4 Bowlers). Led by 8 designated student captains and 2 organizers.
+            Welcome NEXT IAS aspirants &amp; faculty! Scheduled on <strong className="text-white">25th October 2026 (09:00 AM – 11:00 AM)</strong> • <strong className="text-white">10-Over Fast Matches (T10)</strong> across <strong className="text-white">4 simultaneous pitches</strong>. 8 premier teams with flexible 13-player squads led by 8 student captains and 2 organizers.
           </p>
 
           {/* Privacy Guarantee Pill */}

@@ -6,25 +6,37 @@ export default function TeamCard({ team, onSelectTeam }) {
   const batsmen = players.filter(p => p.role === 'batsman');
   const allRounders = players.filter(p => p.role === 'allRounder');
   const bowlers = players.filter(p => p.role === 'bowler');
-
-  const batsmanSlots = Array.from({ length: 5 }, (_, i) => batsmen[i] || null);
-  const allRounderSlots = Array.from({ length: 4 }, (_, i) => allRounders[i] || null);
-  const bowlerSlots = Array.from({ length: 4 }, (_, i) => bowlers[i] || null);
+  const wicketKeepers = players.filter(p => p.isWicketKeeper);
 
   const totalOccupied = players.length;
   const isFull = totalOccupied >= 13;
   const totalOpen = Math.max(0, 13 - totalOccupied);
-  const wicketKeeperCount = players.filter(p => p.isWicketKeeper).length;
 
-  const renderSlotRow = (player, idx, roleLabel) => {
+  // 13 Fixed Squad Slots for the team
+  const squadSlots = Array.from({ length: 13 }, (_, i) => players[i] || null);
+
+  const getRoleBadge = (role) => {
+    switch (role) {
+      case 'batsman':
+        return <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded">🏏 Batsman</span>;
+      case 'allRounder':
+        return <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">⚡ All-Rounder</span>;
+      case 'bowler':
+        return <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">🎯 Bowler</span>;
+      default:
+        return <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">{role}</span>;
+    }
+  };
+
+  const renderSlotRow = (player, idx) => {
     if (player) {
       return (
         <div
           key={player.id || idx}
           className="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-white border border-slate-200 shadow-xs text-xs hover:border-slate-300 transition"
         >
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-[10px] font-bold text-slate-400 w-3.5 flex-shrink-0">
+          <div className="flex items-center gap-1.5 min-w-0 flex-1">
+            <span className="text-[10px] font-bold text-slate-400 w-4 flex-shrink-0">
               {idx + 1}.
             </span>
             {player.isWicketKeeper && (
@@ -46,8 +58,11 @@ export default function TeamCard({ team, onSelectTeam }) {
               </span>
             )}
           </div>
-          <div className="flex items-center gap-1 text-[10px] text-slate-500 font-medium flex-shrink-0 pl-1">
-            <span>{player.battingStyle === 'Left Hand' ? 'LHB' : 'RHB'}</span>
+          <div className="flex items-center gap-1.5 flex-shrink-0 pl-1">
+            {getRoleBadge(player.role)}
+            <span className="text-[10px] text-slate-500 font-medium w-7 text-right">
+              {player.battingStyle === 'Left Hand' ? 'LHB' : 'RHB'}
+            </span>
           </div>
         </div>
       );
@@ -59,7 +74,7 @@ export default function TeamCard({ team, onSelectTeam }) {
         className="flex items-center justify-between py-1 px-2.5 rounded-lg border border-dashed border-slate-200 bg-slate-50/70 text-slate-400 text-xs"
       >
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] font-medium text-slate-400 w-3.5 flex-shrink-0">
+          <span className="text-[10px] font-medium text-slate-400 w-4 flex-shrink-0">
             {idx + 1}.
           </span>
           <span className="text-[11px] italic font-medium text-slate-400">
@@ -96,7 +111,7 @@ export default function TeamCard({ team, onSelectTeam }) {
               {totalOccupied}/13
             </span>
             <div className="text-[10px] text-white/90 font-semibold mt-0.5">
-              {isFull ? '🔴 Full' : `🟢 ${totalOpen} Open`}
+              {isFull ? '🔴 Squad Full' : `🟢 ${totalOpen} Open`}
             </div>
           </div>
         </div>
@@ -107,68 +122,46 @@ export default function TeamCard({ team, onSelectTeam }) {
             <Shield className="w-3.5 h-3.5 text-amber-300 fill-amber-300 flex-shrink-0" />
             <span className="truncate">Captain: <strong>{team.captainName}</strong></span>
           </div>
-          {wicketKeeperCount > 0 && (
+          {wicketKeepers.length > 0 && (
             <span className="bg-amber-400/25 text-amber-200 border border-amber-300/30 px-1.5 py-0.2 rounded text-[10px] font-bold flex-shrink-0">
-              🧤 {wicketKeeperCount} WK
+              🧤 {wicketKeepers.length} WK
             </span>
           )}
         </div>
       </div>
 
-      {/* 2. Categorized Roster Slots List */}
-      <div className="p-3.5 flex-1 space-y-3.5 bg-slate-50/40">
-        
-        {/* Batsmen Section (5 Slots) */}
-        <div>
-          <div className="flex items-center justify-between mb-1.5 px-0.5">
-            <span className="text-[11px] font-extrabold text-slate-700 tracking-tight flex items-center gap-1">
-              <span>🏏</span>
-              <span>BATSMEN (5 Slots)</span>
-            </span>
-            <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
-              {batsmen.length}/5
-            </span>
-          </div>
-          <div className="space-y-1">
-            {batsmanSlots.map((player, idx) => renderSlotRow(player, idx, 'Batsman'))}
-          </div>
+      {/* 2. Live Role Count Distribution Bar */}
+      <div className="bg-slate-100/90 border-b border-slate-200 px-3 py-2 flex items-center justify-between text-xs">
+        <div className="flex items-center gap-1.5 flex-wrap w-full justify-between">
+          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
+            🏏 <span className="text-blue-700 font-extrabold">{batsmen.length}</span> <span className="text-slate-500 font-medium">Batsmen</span>
+          </span>
+          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
+            ⚡ <span className="text-amber-700 font-extrabold">{allRounders.length}</span> <span className="text-slate-500 font-medium">All-Rounders</span>
+          </span>
+          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
+            🎯 <span className="text-emerald-700 font-extrabold">{bowlers.length}</span> <span className="text-slate-500 font-medium">Bowlers</span>
+          </span>
         </div>
-
-        {/* All-Rounders Section (4 Slots) */}
-        <div>
-          <div className="flex items-center justify-between mb-1.5 px-0.5">
-            <span className="text-[11px] font-extrabold text-slate-700 tracking-tight flex items-center gap-1">
-              <span>⚡</span>
-              <span>ALL-ROUNDERS (4 Slots)</span>
-            </span>
-            <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
-              {allRounders.length}/4
-            </span>
-          </div>
-          <div className="space-y-1">
-            {allRounderSlots.map((player, idx) => renderSlotRow(player, idx, 'All-Rounder'))}
-          </div>
-        </div>
-
-        {/* Bowlers Section (4 Slots) */}
-        <div>
-          <div className="flex items-center justify-between mb-1.5 px-0.5">
-            <span className="text-[11px] font-extrabold text-slate-700 tracking-tight flex items-center gap-1">
-              <span>🎯</span>
-              <span>BOWLERS (4 Slots)</span>
-            </span>
-            <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
-              {bowlers.length}/4
-            </span>
-          </div>
-          <div className="space-y-1">
-            {bowlerSlots.map((player, idx) => renderSlotRow(player, idx, 'Bowler'))}
-          </div>
-        </div>
-
       </div>
 
-      {/* 3. Action Button: Register for this team */}
+      {/* 3. 13-Player Squad Roster List */}
+      <div className="p-3.5 flex-1 bg-slate-50/40">
+        <div className="flex items-center justify-between mb-2 px-0.5">
+          <span className="text-[11px] font-extrabold text-slate-700 tracking-tight flex items-center gap-1">
+            <span>📋</span>
+            <span>OFFICIAL SQUAD ROSTER (13 Max)</span>
+          </span>
+          <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+            {totalOccupied}/13 Filled
+          </span>
+        </div>
+        <div className="space-y-1">
+          {squadSlots.map((player, idx) => renderSlotRow(player, idx))}
+        </div>
+      </div>
+
+      {/* 4. Action Button: Register for this team */}
       <div className="p-3 bg-white border-t border-slate-100">
         {isFull ? (
           <button

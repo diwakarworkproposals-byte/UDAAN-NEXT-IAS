@@ -1,16 +1,20 @@
 // API service with automatic fallback to localStorage for zero-config static hosting
-const STORAGE_KEY = 'next_ias_cricket_tournament_data_v6';
+const STORAGE_KEY = 'next_ias_cricket_tournament_data_v7';
 
 const INITIAL_FALLBACK_DATA = {
   tournament: {
     name: "NEXT IAS Umang 2026",
     edition: "Cricket Tournament • Sports & Inspiration Meet",
-    venue: "Delhi Sports Complex / Ground, New Delhi",
-    organizerPin: "NEXTIAS2026",
-    telegramGroupUrl: "https://t.me/+NextIasCricket2026",
+    matchDate: "25th October 2026",
+    timeSlot: "09:00 AM – 11:00 AM",
+    matchFormat: "10 Overs per match (T10)",
+    pitches: 4,
+    simultaneousMatches: true,
+    venue: "NEXT IAS Sports Complex (Pitches 1, 2, 3, 4), New Delhi",
+    organizerPin: "NEXTIAS2610",
+    telegramGroupUrl: "https://t.me/+MgD-vhGBGSgzOWI9",
     totalExpectedPlayers: 108,
     rosterSlotsPerTeam: 13,
-    slotBreakdown: { batsmen: 5, allRounders: 4, bowlers: 4 },
     reservePoolCapacity: 4
   },
   captains: [
@@ -134,13 +138,13 @@ const INITIAL_FALLBACK_DATA = {
       team1Name: "NEXT IAS Titans",
       team2Id: "team-2",
       team2Name: "Rajinder Nagar Royals",
-      dateTime: "Match Day 1 • 09:00 AM",
-      venue: "NEXT IAS Sports Complex, Pitch A",
+      dateTime: "25 Oct 2026 • 09:00 AM – 09:40 AM",
+      venue: "Pitch 1 (Simultaneous T10)",
       status: "Upcoming",
       winnerTeamId: null,
       winnerTeamName: null,
       scores: { team1: "", team2: "" },
-      summary: "Winner advances to Semi-Final 1",
+      summary: "10-Over Match (T10) • Winner advances to Semi-Final 1",
       nextMatchId: "m-5",
       nextSlot: "team1"
     },
@@ -153,13 +157,13 @@ const INITIAL_FALLBACK_DATA = {
       team1Name: "Karol Bagh Kings",
       team2Id: "team-4",
       team2Name: "Civil Service Strikers",
-      dateTime: "Match Day 1 • 11:30 AM",
-      venue: "NEXT IAS Sports Complex, Pitch B",
+      dateTime: "25 Oct 2026 • 09:00 AM – 09:40 AM",
+      venue: "Pitch 2 (Simultaneous T10)",
       status: "Upcoming",
       winnerTeamId: null,
       winnerTeamName: null,
       scores: { team1: "", team2: "" },
-      summary: "Winner advances to Semi-Final 1",
+      summary: "10-Over Match (T10) • Winner advances to Semi-Final 1",
       nextMatchId: "m-5",
       nextSlot: "team2"
     },
@@ -172,13 +176,13 @@ const INITIAL_FALLBACK_DATA = {
       team1Name: "CSAT Crusaders",
       team2Id: "team-6",
       team2Name: "LBSNAA Challengers",
-      dateTime: "Match Day 1 • 02:00 PM",
-      venue: "NEXT IAS Sports Complex, Pitch A",
+      dateTime: "25 Oct 2026 • 09:00 AM – 09:40 AM",
+      venue: "Pitch 3 (Simultaneous T10)",
       status: "Upcoming",
       winnerTeamId: null,
       winnerTeamName: null,
       scores: { team1: "", team2: "" },
-      summary: "Winner advances to Semi-Final 2",
+      summary: "10-Over Match (T10) • Winner advances to Semi-Final 2",
       nextMatchId: "m-6",
       nextSlot: "team1"
     },
@@ -191,13 +195,13 @@ const INITIAL_FALLBACK_DATA = {
       team1Name: "Old Rajinder Mavericks",
       team2Id: "team-8",
       team2Name: "Prelims Powerhitters",
-      dateTime: "Match Day 1 • 04:30 PM",
-      venue: "NEXT IAS Sports Complex, Pitch B",
+      dateTime: "25 Oct 2026 • 09:00 AM – 09:40 AM",
+      venue: "Pitch 4 (Simultaneous T10)",
       status: "Upcoming",
       winnerTeamId: null,
       winnerTeamName: null,
       scores: { team1: "", team2: "" },
-      summary: "Winner advances to Semi-Final 2",
+      summary: "10-Over Match (T10) • Winner advances to Semi-Final 2",
       nextMatchId: "m-6",
       nextSlot: "team2"
     },
@@ -210,13 +214,13 @@ const INITIAL_FALLBACK_DATA = {
       team1Name: "Winner QF 1",
       team2Id: null,
       team2Name: "Winner QF 2",
-      dateTime: "Match Day 2 • 10:00 AM",
-      venue: "NEXT IAS Championship Oval",
+      dateTime: "25 Oct 2026 • 09:45 AM – 10:20 AM",
+      venue: "Pitch 1 (Simultaneous T10)",
       status: "Upcoming",
       winnerTeamId: null,
       winnerTeamName: null,
       scores: { team1: "", team2: "" },
-      summary: "Winner qualifies for Grand Finale",
+      summary: "10-Over Match (T10) • Winner qualifies for Grand Finale",
       nextMatchId: "m-7",
       nextSlot: "team1"
     },
@@ -229,13 +233,13 @@ const INITIAL_FALLBACK_DATA = {
       team1Name: "Winner QF 3",
       team2Id: null,
       team2Name: "Winner QF 4",
-      dateTime: "Match Day 2 • 01:30 PM",
-      venue: "NEXT IAS Championship Oval",
+      dateTime: "25 Oct 2026 • 09:45 AM – 10:20 AM",
+      venue: "Pitch 2 (Simultaneous T10)",
       status: "Upcoming",
       winnerTeamId: null,
       winnerTeamName: null,
       scores: { team1: "", team2: "" },
-      summary: "Winner qualifies for Grand Finale",
+      summary: "10-Over Match (T10) • Winner qualifies for Grand Finale",
       nextMatchId: "m-7",
       nextSlot: "team2"
     },
@@ -248,13 +252,13 @@ const INITIAL_FALLBACK_DATA = {
       team1Name: "Winner SF 1",
       team2Id: null,
       team2Name: "Winner SF 2",
-      dateTime: "Match Day 2 • 05:00 PM",
-      venue: "NEXT IAS Championship Oval (Floodlights)",
+      dateTime: "25 Oct 2026 • 10:25 AM – 11:00 AM",
+      venue: "Pitch 1 (Championship Pitch)",
       status: "Upcoming",
       winnerTeamId: null,
       winnerTeamName: null,
       scores: { team1: "", team2: "" },
-      summary: "Tournament Championship Trophy Match",
+      summary: "10-Over Championship Final (T10) • Trophy Presentation at 11:00 AM",
       nextMatchId: null,
       nextSlot: null
     }
@@ -309,19 +313,18 @@ function computeTeamStats(team) {
   const batsmen = players.filter(p => p.role === 'batsman').length;
   const allRounders = players.filter(p => p.role === 'allRounder').length;
   const bowlers = players.filter(p => p.role === 'bowler').length;
+  const wicketKeepersCount = players.filter(p => p.isWicketKeeper).length;
   const total = players.length;
 
   return {
-    maxSlots: { batsmen: 5, allRounders: 4, bowlers: 4, total: 13 },
+    maxSlots: { total: 13 },
+    counts: { batsmen, allRounders, bowlers, wicketKeepers: wicketKeepersCount, total },
     occupied: { batsmen, allRounders, bowlers, total },
     available: {
-      batsmen: Math.max(0, 5 - batsmen),
-      allRounders: Math.max(0, 4 - allRounders),
-      bowlers: Math.max(0, 4 - bowlers),
       total: Math.max(0, 13 - total)
     },
     isFull: total >= 13,
-    wicketKeepersCount: players.filter(p => p.isWicketKeeper).length
+    wicketKeepersCount
   };
 }
 
@@ -513,39 +516,23 @@ export const api = {
     if (!team.players) team.players = [];
 
     // If student selected "Not Sure", place as EXTRA directly in the team
-    if (isNotSure) {
-      newPlayer.teamId = team.id;
-      team.players.push(newPlayer);
-      saveLocalData(data);
-      return {
-        success: true,
-        message: `Registered as an EXTRA for ${team.name}! You are tagged with an [EXTRA] badge on the team roster.`,
-        player: newPlayer,
-        assignedTo: team.name
-      };
+    // Enforce 13-player team squad limit
+    if (team.players.length >= 13) {
+      throw new Error(`${team.name} has already reached its maximum squad limit of 13 players. Please select another team.`);
     }
 
-    // Surely Join: check slot availability for Playing 11
-    const stats = computeTeamStats(team);
-    let available = false;
-    if (registrationData.role === 'batsman' && stats.available.batsmen > 0) available = true;
-    if (registrationData.role === 'allRounder' && stats.available.allRounders > 0) available = true;
-    if (registrationData.role === 'bowler' && stats.available.bowlers > 0) available = true;
+    newPlayer.teamId = team.id;
+    team.players.push(newPlayer);
+    saveLocalData(data);
 
-    if (available) {
-      newPlayer.teamId = team.id;
-      team.players.push(newPlayer);
-      saveLocalData(data);
-      return {
-        success: true,
-        message: `Congratulations! You have been confirmed in the playing roster of ${team.name}!`,
-        player: newPlayer,
-        assignedTo: team.name
-      };
-    } else {
-      // Role is full
-      throw new Error(`The ${registrationData.role} slot in ${team.name} is currently full. Please select another team or join as an Extra.`);
-    }
+    return {
+      success: true,
+      message: isNotSure
+        ? `Registered as an EXTRA for ${team.name}! You are tagged with an [EXTRA] badge on the team roster.`
+        : `Congratulations! You have been confirmed in the squad of ${team.name}!`,
+      player: newPlayer,
+      assignedTo: team.name
+    };
   },
 
   // Admin login check

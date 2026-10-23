@@ -42,19 +42,18 @@ function getTeamStats(team) {
   const batsmenCount = players.filter(p => p.role === 'batsman').length;
   const allRoundersCount = players.filter(p => p.role === 'allRounder').length;
   const bowlersCount = players.filter(p => p.role === 'bowler').length;
+  const wicketKeepersCount = players.filter(p => p.isWicketKeeper).length;
   const totalCount = players.length;
 
   return {
-    maxSlots: { batsmen: 5, allRounders: 4, bowlers: 4, total: 13 },
+    maxSlots: { total: 13 },
+    counts: { batsmen: batsmenCount, allRounders: allRoundersCount, bowlers: bowlersCount, wicketKeepers: wicketKeepersCount, total: totalCount },
     occupied: { batsmen: batsmenCount, allRounders: allRoundersCount, bowlers: bowlersCount, total: totalCount },
     available: {
-      batsmen: Math.max(0, 5 - batsmenCount),
-      allRounders: Math.max(0, 4 - allRoundersCount),
-      bowlers: Math.max(0, 4 - bowlersCount),
       total: Math.max(0, 13 - totalCount)
     },
     isFull: totalCount >= 13,
-    wicketKeepersCount: players.filter(p => p.isWicketKeeper).length
+    wicketKeepersCount
   };
 }
 
@@ -218,48 +217,32 @@ app.post('/api/register', (req, res) => {
   if (!targetTeam.players) targetTeam.players = [];
 
   // If student selected "Not Sure", place as EXTRA directly in the team
-  if (isNotSure) {
-    newPlayer.teamId = targetTeam.id;
-    targetTeam.players.push(newPlayer);
-    writeData(data);
-    return res.json({
-      success: true,
-      message: `Registered as an EXTRA for ${targetTeam.name}! You are tagged with an [EXTRA] badge on the team roster.`,
-      player: newPlayer,
-      assignedTo: targetTeam.name
-    });
-  }
-
-  // Surely Join: check role slot availability
-  const stats = getTeamStats(targetTeam);
-  let slotAvailable = false;
-  if (role === 'batsman' && stats.available.batsmen > 0) slotAvailable = true;
-  if (role === 'allRounder' && stats.available.allRounders > 0) slotAvailable = true;
-  if (role === 'bowler' && stats.available.bowlers > 0) slotAvailable = true;
-
-  if (slotAvailable) {
-    newPlayer.teamId = targetTeam.id;
-    targetTeam.players.push(newPlayer);
-    writeData(data);
-    return res.json({
-      success: true,
-      message: `Congratulations! You have been confirmed in the playing roster of ${targetTeam.name}!`,
-      player: newPlayer,
-      assignedTo: targetTeam.name
-    });
-  } else {
+  // Enforce 13-player team limit
+  if (targetTeam.players.length >= 13) {
     return res.status(409).json({
-      error: `All ${role} slots for ${targetTeam.name} are currently full! Please choose another team or register as an Extra.`,
-      available: stats.available
+      error: `${targetTeam.name} has already reached its maximum squad limit of 13 players. Please choose another team.`
     });
   }
+
+  newPlayer.teamId = targetTeam.id;
+  targetTeam.players.push(newPlayer);
+  writeData(data);
+
+  return res.json({
+    success: true,
+    message: isNotSure
+      ? `Registered as an EXTRA for ${targetTeam.name}! You are tagged with an [EXTRA] badge on the team roster.`
+      : `Congratulations! You have been confirmed in the squad of ${targetTeam.name}!`,
+    player: newPlayer,
+    assignedTo: targetTeam.name
+  });
 });
 
 // Middleware for Admin authentication via Organizer PIN
 function verifyAdminPin(req, res, next) {
   const pin = req.headers['x-organizer-pin'] || req.query.pin || req.body.pin;
   const data = readData();
-  const configuredPin = data.tournament.organizerPin || 'NEXTIAS2026';
+  const configuredPin = data.tournament.organizerPin || 'NEXTIAS2610';
 
   if (!pin || pin !== configuredPin) {
     return res.status(401).json({ error: 'Unauthorized: Invalid Organizer PIN.' });
@@ -271,12 +254,12 @@ function verifyAdminPin(req, res, next) {
 app.post('/api/admin/login', (req, res) => {
   const { pin } = req.body;
   const data = readData();
-  const configuredPin = data.tournament.organizerPin || 'NEXTIAS2026';
+  const configuredPin = data.tournament.organizerPin || 'NEXTIAS2610';
 
   if (pin === configuredPin) {
     return res.json({ success: true, message: 'Organizer authentication successful.' });
   }
-  return res.status(401).json({ error: 'Incorrect Organizer PIN. Default is NEXTIAS2026' });
+  return res.status(401).json({ error: 'Incorrect Organizer PIN.' });
 });
 
 // 4. ADMIN FULL DATA (Includes student phone numbers for event organizers)

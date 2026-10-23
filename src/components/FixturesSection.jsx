@@ -70,10 +70,28 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
             <span>Knockout Tournament Fixtures</span>
           </div>
           <h2 className="text-2xl font-black font-heading tracking-tight text-slate-900">
-            Match Schedule, Live Scores & Results
+            Match Schedule, Live Scores &amp; Results
           </h2>
-          <p className="text-xs text-slate-500 mt-1">
-            All 7 knockout matches are tracked here in real-time. Winners automatically advance to the Semi-Finals and Grand Finale!
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-red-50 text-brand-red font-bold text-xs border border-red-200">
+              <Calendar className="w-3.5 h-3.5" />
+              <span>25th October 2026</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-sky-50 text-sky-800 font-bold text-xs border border-sky-200">
+              <Clock className="w-3.5 h-3.5" />
+              <span>09:00 AM – 11:00 AM</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 text-amber-800 font-bold text-xs border border-amber-200">
+              <Zap className="w-3.5 h-3.5" />
+              <span>10-Over Matches (T10)</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-800 font-bold text-xs border border-emerald-200">
+              <MapPin className="w-3.5 h-3.5" />
+              <span>4 Pitches Simultaneous (P1, P2, P3, P4)</span>
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 mt-2">
+            All 4 Quarter-Finals kick off simultaneously at 09:00 AM across 4 pitches. Semi-Finals at 09:45 AM, followed by the Grand Finale on Pitch 1!
           </p>
         </div>
 

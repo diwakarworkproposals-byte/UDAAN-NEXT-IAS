@@ -47,7 +47,7 @@ export default function TelegramNotice({ telegramUrl }) {
 
           <div className="flex-shrink-0 w-full md:w-auto text-center md:text-right">
             <a
-              href={telegramUrl || "https://t.me/+NextIasCricket2026"}
+              href={telegramUrl || "https://t.me/+MgD-vhGBGSgzOWI9"}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-sky-500 hover:bg-sky-400 text-white font-extrabold text-sm shadow-lg shadow-sky-500/30 transition transform hover:-translate-y-0.5 active:translate-y-0 w-full sm:w-auto"

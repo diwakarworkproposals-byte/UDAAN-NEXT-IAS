@@ -2,16 +2,16 @@
   "tournament": {
     "name": "NEXT IAS Umang 2026",
     "edition": "Cricket Tournament • Sports & Inspiration Meet",
-    "venue": "Delhi Cricket Ground / Sports Complex, New Delhi",
-    "organizerPin": "NEXTIAS2026",
-    "telegramGroupUrl": "https://t.me/+NextIasCricket2026",
+    "matchDate": "25th October 2026",
+    "timeSlot": "09:00 AM – 11:00 AM",
+    "matchFormat": "10 Overs per match (T10)",
+    "pitches": 4,
+    "simultaneousMatches": true,
+    "venue": "NEXT IAS Sports Complex (Pitches 1, 2, 3, 4), New Delhi",
+    "organizerPin": "NEXTIAS2610",
+    "telegramGroupUrl": "https://t.me/+MgD-vhGBGSgzOWI9",
     "totalExpectedPlayers": 108,
     "rosterSlotsPerTeam": 13,
-    "slotBreakdown": {
-      "batsmen": 5,
-      "allRounders": 4,
-      "bowlers": 4
-    },
     "reservePoolCapacity": 4
   },
   "captains": [
@@ -307,8 +307,8 @@
       "team1Name": "NEXT IAS Titans",
       "team2Id": "team-2",
       "team2Name": "Rajinder Nagar Royals",
-      "dateTime": "Match Day 1 • 09:00 AM",
-      "venue": "NEXT IAS Sports Complex, Pitch A",
+      "dateTime": "25 Oct 2026 • 09:00 AM – 09:40 AM",
+      "venue": "Pitch 1 (Simultaneous T10)",
       "status": "Upcoming",
       "winnerTeamId": null,
       "winnerTeamName": null,
@@ -316,7 +316,7 @@
         "team1": "",
         "team2": ""
       },
-      "summary": "Winner advances to Semi-Final 1",
+      "summary": "10-Over Match (T10) • Winner advances to Semi-Final 1",
       "nextMatchId": "m-5",
       "nextSlot": "team1"
     },
@@ -329,8 +329,8 @@
       "team1Name": "Karol Bagh Kings",
       "team2Id": "team-4",
       "team2Name": "Civil Service Strikers",
-      "dateTime": "Match Day 1 • 11:30 AM",
-      "venue": "NEXT IAS Sports Complex, Pitch B",
+      "dateTime": "25 Oct 2026 • 09:00 AM – 09:40 AM",
+      "venue": "Pitch 2 (Simultaneous T10)",
       "status": "Upcoming",
       "winnerTeamId": null,
       "winnerTeamName": null,
@@ -338,7 +338,7 @@
         "team1": "",
         "team2": ""
       },
-      "summary": "Winner advances to Semi-Final 1",
+      "summary": "10-Over Match (T10) • Winner advances to Semi-Final 1",
       "nextMatchId": "m-5",
       "nextSlot": "team2"
     },
@@ -351,8 +351,8 @@
       "team1Name": "CSAT Crusaders",
       "team2Id": "team-6",
       "team2Name": "LBSNAA Challengers",
-      "dateTime": "Match Day 1 • 02:00 PM",
-      "venue": "NEXT IAS Sports Complex, Pitch A",
+      "dateTime": "25 Oct 2026 • 09:00 AM – 09:40 AM",
+      "venue": "Pitch 3 (Simultaneous T10)",
       "status": "Upcoming",
       "winnerTeamId": null,
       "winnerTeamName": null,
@@ -360,7 +360,7 @@
         "team1": "",
         "team2": ""
       },
-      "summary": "Winner advances to Semi-Final 2",
+      "summary": "10-Over Match (T10) • Winner advances to Semi-Final 2",
       "nextMatchId": "m-6",
       "nextSlot": "team1"
     },
@@ -373,8 +373,8 @@
       "team1Name": "Old Rajinder Mavericks",
       "team2Id": "team-8",
       "team2Name": "Prelims Powerhitters",
-      "dateTime": "Match Day 1 • 04:30 PM",
-      "venue": "NEXT IAS Sports Complex, Pitch B",
+      "dateTime": "25 Oct 2026 • 09:00 AM – 09:40 AM",
+      "venue": "Pitch 4 (Simultaneous T10)",
       "status": "Upcoming",
       "winnerTeamId": null,
       "winnerTeamName": null,
@@ -382,7 +382,7 @@
         "team1": "",
         "team2": ""
       },
-      "summary": "Winner advances to Semi-Final 2",
+      "summary": "10-Over Match (T10) • Winner advances to Semi-Final 2",
       "nextMatchId": "m-6",
       "nextSlot": "team2"
     },
@@ -395,8 +395,8 @@
       "team1Name": "Winner QF 1",
       "team2Id": null,
       "team2Name": "Winner QF 2",
-      "dateTime": "Match Day 2 • 10:00 AM",
-      "venue": "NEXT IAS Championship Oval",
+      "dateTime": "25 Oct 2026 • 09:45 AM – 10:20 AM",
+      "venue": "Pitch 1 (Simultaneous T10)",
       "status": "Upcoming",
       "winnerTeamId": null,
       "winnerTeamName": null,
@@ -404,7 +404,7 @@
         "team1": "",
         "team2": ""
       },
-      "summary": "Winner qualifies for Grand Finale",
+      "summary": "10-Over Match (T10) • Winner qualifies for Grand Finale",
       "nextMatchId": "m-7",
       "nextSlot": "team1"
     },
@@ -417,8 +417,8 @@
       "team1Name": "Winner QF 3",
       "team2Id": null,
       "team2Name": "Winner QF 4",
-      "dateTime": "Match Day 2 • 01:30 PM",
-      "venue": "NEXT IAS Championship Oval",
+      "dateTime": "25 Oct 2026 • 09:45 AM – 10:20 AM",
+      "venue": "Pitch 2 (Simultaneous T10)",
       "status": "Upcoming",
       "winnerTeamId": null,
       "winnerTeamName": null,
@@ -426,7 +426,7 @@
         "team1": "",
         "team2": ""
       },
-      "summary": "Winner qualifies for Grand Finale",
+      "summary": "10-Over Match (T10) • Winner qualifies for Grand Finale",
       "nextMatchId": "m-7",
       "nextSlot": "team2"
     },
@@ -439,8 +439,8 @@
       "team1Name": "Winner SF 1",
       "team2Id": null,
       "team2Name": "Winner SF 2",
-      "dateTime": "Match Day 2 • 05:00 PM",
-      "venue": "NEXT IAS Championship Oval (Floodlights)",
+      "dateTime": "25 Oct 2026 • 10:25 AM – 11:00 AM",
+      "venue": "Pitch 1 (Championship Pitch)",
       "status": "Upcoming",
       "winnerTeamId": null,
       "winnerTeamName": null,
@@ -448,7 +448,7 @@
         "team1": "",
         "team2": ""
       },
-      "summary": "Tournament Championship Trophy Match",
+      "summary": "10-Over Championship Final (T10) • Trophy Presentation at 11:00 AM",
       "nextMatchId": null,
       "nextSlot": null
     }

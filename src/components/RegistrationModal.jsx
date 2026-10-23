@@ -35,13 +35,8 @@ export default function RegistrationModal({
   const selectedTeam = teams.find(t => t.id === formData.preferredTeamId);
   const stats = selectedTeam ? selectedTeam.stats : null;
 
-  // Check if role is full in selected team
-  let isRoleFullInSelectedTeam = false;
-  if (stats && formData.preferredTeamId !== 'reserve') {
-    if (formData.role === 'batsman' && stats.available.batsmen <= 0) isRoleFullInSelectedTeam = true;
-    if (formData.role === 'allRounder' && stats.available.allRounders <= 0) isRoleFullInSelectedTeam = true;
-    if (formData.role === 'bowler' && stats.available.bowlers <= 0) isRoleFullInSelectedTeam = true;
-  }
+  // Check if selected team is full (13 players max)
+  const isSelectedTeamFull = selectedTeam ? ((selectedTeam.players || []).length >= 13) : false;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -231,9 +226,9 @@ export default function RegistrationModal({
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { id: 'batsman', label: 'Batsman', icon: '🏏', subtitle: '5 Slots / Team' },
-                  { id: 'allRounder', label: 'All-Rounder', icon: '⚡', subtitle: '4 Slots / Team' },
-                  { id: 'bowler', label: 'Bowler', icon: '🎯', subtitle: '4 Slots / Team' }
+                  { id: 'batsman', label: 'Batsman', icon: '🏏', subtitle: `${(selectedTeam?.players || []).filter(p => p.role === 'batsman').length} in Team` },
+                  { id: 'allRounder', label: 'All-Rounder', icon: '⚡', subtitle: `${(selectedTeam?.players || []).filter(p => p.role === 'allRounder').length} in Team` },
+                  { id: 'bowler', label: 'Bowler', icon: '🎯', subtitle: `${(selectedTeam?.players || []).filter(p => p.role === 'bowler').length} in Team` }
                 ].map((r) => (
                   <button
                     key={r.id}
@@ -415,18 +410,15 @@ export default function RegistrationModal({
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs bg-white focus:ring-2 focus:ring-brand-red focus:border-transparent outline-none font-medium"
               >
                 {teams.map((t) => {
-                  const s = t.stats;
-                  let roleAvailable = 0;
-                  if (s) {
-                    if (formData.role === 'batsman') roleAvailable = s.available.batsmen;
-                    if (formData.role === 'allRounder') roleAvailable = s.available.allRounders;
-                    if (formData.role === 'bowler') roleAvailable = s.available.bowlers;
-                  }
-                  const isRoleFull = roleAvailable <= 0;
+                  const pCount = (t.players || []).length;
+                  const isFull = pCount >= 13;
+                  const batsmenCount = (t.players || []).filter(p => p.role === 'batsman').length;
+                  const allRoundersCount = (t.players || []).filter(p => p.role === 'allRounder').length;
+                  const bowlersCount = (t.players || []).filter(p => p.role === 'bowler').length;
 
                   return (
-                    <option key={t.id} value={t.id}>
-                      {t.name} {isRoleFull ? `(FULL for ${formData.role}s)` : `(${roleAvailable} ${formData.role} slots open)`}
+                    <option key={t.id} value={t.id} disabled={isFull}>
+                      {t.name} • {pCount}/13 Players ({isFull ? 'SQUAD FULL' : `${13 - pCount} open`} | 🏏{batsmenCount}B, ⚡{allRoundersCount}AR, 🎯{bowlersCount}BW)
                     </option>
                   );
                 })}
@@ -435,15 +427,46 @@ export default function RegistrationModal({
                 </option>
               </select>
 
-              {/* Warning if role is full in selected team */}
-              {isRoleFullInSelectedTeam && formData.preferredTeamId !== 'reserve' && (
-                <div className="mt-2 p-2.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong>Role Slot Filled:</strong> All {formData.role} slots in {selectedTeam ? selectedTeam.name : 'this team'} are currently full!
-                    <br />
-                    You can either choose a different team above, or register as an <strong>Extra</strong> or join the Reserve Pool.
+              {/* Live breakdown of selected team */}
+              {selectedTeam && formData.preferredTeamId !== 'reserve' && (
+                <div className="mt-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                  <div className="flex items-center justify-between text-xs font-bold text-slate-800 mb-2">
+                    <span>{selectedTeam.name} Current Squad:</span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${(selectedTeam.players?.length || 0) >= 13 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800'}`}>
+                      {(selectedTeam.players?.length || 0) >= 13 ? 'Squad Full (13/13)' : `${(selectedTeam.players?.length || 0)}/13 Players (${13 - (selectedTeam.players?.length || 0)} Open)`}
+                    </span>
                   </div>
+                  <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
+                      <span className="block text-[11px] font-semibold text-slate-500">🏏 Batsmen</span>
+                      <span className="text-sm font-extrabold text-blue-700">
+                        {(selectedTeam.players || []).filter(p => p.role === 'batsman').length}
+                      </span>
+                    </div>
+                    <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
+                      <span className="block text-[11px] font-semibold text-slate-500">⚡ All-Rounders</span>
+                      <span className="text-sm font-extrabold text-amber-700">
+                        {(selectedTeam.players || []).filter(p => p.role === 'allRounder').length}
+                      </span>
+                    </div>
+                    <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
+                      <span className="block text-[11px] font-semibold text-slate-500">🎯 Bowlers</span>
+                      <span className="text-sm font-extrabold text-emerald-700">
+                        {(selectedTeam.players || []).filter(p => p.role === 'bowler').length}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-2 text-center">
+                    ✨ Flexible squad: Choose any role you prefer. The only limit is 13 total players per team!
+                  </p>
+                </div>
+              )}
+
+              {/* Warning if team is full */}
+              {isSelectedTeamFull && formData.preferredTeamId !== 'reserve' && (
+                <div className="mt-2 p-2.5 rounded-xl bg-rose-50 border border-rose-300 text-rose-900 text-xs flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+                  <span>This team has reached its 13-player squad limit. Please choose another team or register as an Extra.</span>
                 </div>
               )}
             </div>
