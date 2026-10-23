@@ -227,7 +227,7 @@ export default function RegistrationModal({
               <div className="grid grid-cols-3 gap-2">
                 {[
                   { id: 'batsman', label: 'Batsman', icon: '🏏', subtitle: `${(selectedTeam?.players || []).filter(p => p.role === 'batsman').length} in Team` },
-                  { id: 'allRounder', label: 'All-Rounder', icon: '⚡', subtitle: `${(selectedTeam?.players || []).filter(p => p.role === 'allRounder').length} in Team` },
+                  { id: 'allRounder', label: 'All-Rounder', icon: '⚡', subtitle: `${(selectedTeam?.players || []).filter(p => p.role === 'allRounder' || p.role === 'battingAllRounder' || p.role === 'bowlingAllRounder').length} in Team` },
                   { id: 'bowler', label: 'Bowler', icon: '🎯', subtitle: `${(selectedTeam?.players || []).filter(p => p.role === 'bowler').length} in Team` }
                 ].map((r) => (
                   <button
@@ -413,7 +413,7 @@ export default function RegistrationModal({
                   const pCount = (t.players || []).length;
                   const isFull = pCount >= 13;
                   const batsmenCount = (t.players || []).filter(p => p.role === 'batsman').length;
-                  const allRoundersCount = (t.players || []).filter(p => p.role === 'allRounder').length;
+                  const allRoundersCount = (t.players || []).filter(p => p.role === 'allRounder' || p.role === 'battingAllRounder' || p.role === 'bowlingAllRounder').length;
                   const bowlersCount = (t.players || []).filter(p => p.role === 'bowler').length;
 
                   return (
@@ -446,7 +446,7 @@ export default function RegistrationModal({
                     <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
                       <span className="block text-[11px] font-semibold text-slate-500">⚡ All-Rounders</span>
                       <span className="text-sm font-extrabold text-amber-700">
-                        {(selectedTeam.players || []).filter(p => p.role === 'allRounder').length}
+                        {(selectedTeam.players || []).filter(p => p.role === 'allRounder' || p.role === 'battingAllRounder' || p.role === 'bowlingAllRounder').length}
                       </span>
                     </div>
                     <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">

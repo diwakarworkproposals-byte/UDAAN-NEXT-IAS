@@ -4,7 +4,7 @@ import { Shield, ArrowRight, UserPlus, CheckCircle2 } from 'lucide-react';
 export default function TeamCard({ team, onSelectTeam }) {
   const players = team.players || [];
   const batsmen = players.filter(p => p.role === 'batsman');
-  const allRounders = players.filter(p => p.role === 'allRounder');
+  const allRounders = players.filter(p => p.role === 'allRounder' || p.role === 'battingAllRounder' || p.role === 'bowlingAllRounder');
   const bowlers = players.filter(p => p.role === 'bowler');
   const wicketKeepers = players.filter(p => p.isWicketKeeper);
 
@@ -19,6 +19,10 @@ export default function TeamCard({ team, onSelectTeam }) {
     switch (role) {
       case 'batsman':
         return <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-1 py-0.2 rounded whitespace-nowrap">🏏 Bat</span>;
+      case 'battingAllRounder':
+        return <span className="text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-300 px-1 py-0.2 rounded whitespace-nowrap" title="Batting All-Rounder">⚡ Bat AR</span>;
+      case 'bowlingAllRounder':
+        return <span className="text-[10px] font-bold text-teal-800 bg-teal-50 border border-teal-300 px-1 py-0.2 rounded whitespace-nowrap" title="Bowling All-Rounder">⚡ Bowl AR</span>;
       case 'allRounder':
         return <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1 py-0.2 rounded whitespace-nowrap">⚡ AR</span>;
       case 'bowler':

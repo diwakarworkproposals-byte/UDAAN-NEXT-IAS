@@ -226,7 +226,8 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
       (p.teamName && p.teamName.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const matchesTeam = selectedTeamFilter === 'ALL' || p.currentTeamId === selectedTeamFilter;
-    const matchesRole = selectedRoleFilter === 'ALL' || p.role === selectedRoleFilter;
+    const matchesRole = selectedRoleFilter === 'ALL' ||
+      (selectedRoleFilter === 'allRounder' ? (p.role === 'allRounder' || p.role === 'battingAllRounder' || p.role === 'bowlingAllRounder') : p.role === selectedRoleFilter);
     const matchesAttendance = selectedAttendanceFilter === 'ALL' || p.attendance === selectedAttendanceFilter;
 
     return matchesSearch && matchesTeam && matchesRole && matchesAttendance;
@@ -428,7 +429,9 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
                 >
                   <option value="ALL">All Roles</option>
                   <option value="batsman">Batsmen</option>
-                  <option value="allRounder">All-Rounders</option>
+                  <option value="battingAllRounder">Batting All-Rounders</option>
+                  <option value="bowlingAllRounder">Bowling All-Rounders</option>
+                  <option value="allRounder">All-Rounders (Combined)</option>
                   <option value="bowler">Bowlers</option>
                 </select>
 
@@ -500,8 +503,11 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
 
                           {/* Role & Style */}
                           <td className="py-3 px-3">
-                            <div className="font-semibold text-slate-800 capitalize">
-                              {p.role === 'allRounder' ? '⚡ All-Rounder' : p.role === 'batsman' ? '🏏 Batsman' : '🎯 Bowler'}
+                            <div className="font-semibold text-slate-800">
+                              {p.role === 'battingAllRounder' ? '⚡ Batting All-Rounder' :
+                               p.role === 'bowlingAllRounder' ? '⚡ Bowling All-Rounder' :
+                               p.role === 'allRounder' ? '⚡ All-Rounder' :
+                               p.role === 'batsman' ? '🏏 Batsman' : '🎯 Bowler'}
                             </div>
                             <div className="text-[11px] text-slate-500">
                               {p.battingStyle || 'RHB'} • {p.bowlingStyle || 'Bowler'}

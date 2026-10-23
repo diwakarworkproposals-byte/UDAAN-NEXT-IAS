@@ -1,5 +1,5 @@
 // API service with automatic fallback to localStorage for zero-config static hosting
-const STORAGE_KEY = 'next_ias_cricket_tournament_data_v7';
+const STORAGE_KEY = 'next_ias_cricket_tournament_data_v8';
 
 const INITIAL_FALLBACK_DATA = {
   tournament: {
@@ -39,7 +39,7 @@ const INITIAL_FALLBACK_DATA = {
       accentColor: "#ED1C24",
       captainName: "Adwitya (Captain)",
       players: [
-        { id: "p-cap-1", name: "Adwitya", rollNo: "CAPT-01", role: "allRounder", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Medium", mobile: "8700608044", isCaptain: true, attendance: "Confirmed", teamId: "team-1" }
+        { id: "p-cap-1", name: "Adwitya", rollNo: "CAPT-01", role: "battingAllRounder", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Medium", mobile: "8700608044", isCaptain: true, attendance: "Confirmed", teamId: "team-1" }
       ]
     },
     {
@@ -63,7 +63,7 @@ const INITIAL_FALLBACK_DATA = {
       accentColor: "#F59E0B",
       captainName: "Jatin Singh (Captain)",
       players: [
-        { id: "p-cap-3", name: "Jatin Singh", rollNo: "CAPT-03", role: "bowler", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Fast", mobile: "6205459492", isCaptain: true, attendance: "Confirmed", teamId: "team-3" }
+        { id: "p-cap-3", name: "Jatin Singh", rollNo: "CAPT-03", role: "battingAllRounder", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Medium", mobile: "6205459492", isCaptain: true, attendance: "Confirmed", teamId: "team-3" }
       ]
     },
     {
@@ -99,7 +99,7 @@ const INITIAL_FALLBACK_DATA = {
       accentColor: "#0891B2",
       captainName: "Satyam (Captain)",
       players: [
-        { id: "p-cap-6", name: "Satyam", rollNo: "CAPT-06", role: "bowler", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Left-arm Orthodox", mobile: "9219832109", isCaptain: true, attendance: "Confirmed", teamId: "team-6" }
+        { id: "p-cap-6", name: "Satyam", rollNo: "CAPT-06", role: "bowlingAllRounder", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Left-arm Orthodox", mobile: "9219832109", isCaptain: true, attendance: "Confirmed", teamId: "team-6" }
       ]
     },
     {
@@ -111,7 +111,7 @@ const INITIAL_FALLBACK_DATA = {
       accentColor: "#E11D48",
       captainName: "Siddharth (Captain)",
       players: [
-        { id: "p-cap-7", name: "Siddharth", rollNo: "CAPT-07", role: "allRounder", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Fast Medium", mobile: "7717706744", isCaptain: true, attendance: "Confirmed", teamId: "team-7" }
+        { id: "p-cap-7", name: "Siddharth", rollNo: "CAPT-07", role: "batsman", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "None", mobile: "7717706744", isCaptain: true, attendance: "Confirmed", teamId: "team-7" }
       ]
     },
     {
@@ -123,7 +123,7 @@ const INITIAL_FALLBACK_DATA = {
       accentColor: "#EA580C",
       captainName: "Vansh (Captain)",
       players: [
-        { id: "p-cap-8", name: "Vansh", rollNo: "CAPT-08", role: "batsman", isWicketKeeper: true, battingStyle: "Left Hand", bowlingStyle: "None", mobile: "7828035527", isCaptain: true, attendance: "Confirmed", teamId: "team-8" }
+        { id: "p-cap-8", name: "Vansh", rollNo: "CAPT-08", role: "bowlingAllRounder", isWicketKeeper: false, battingStyle: "Left Hand", bowlingStyle: "Right-arm Fast Medium", mobile: "7828035527", isCaptain: true, attendance: "Confirmed", teamId: "team-8" }
       ]
     }
   ],
@@ -311,7 +311,7 @@ function saveLocalData(data) {
 function computeTeamStats(team) {
   const players = team.players || [];
   const batsmen = players.filter(p => p.role === 'batsman').length;
-  const allRounders = players.filter(p => p.role === 'allRounder').length;
+  const allRounders = players.filter(p => p.role === 'allRounder' || p.role === 'battingAllRounder' || p.role === 'bowlingAllRounder').length;
   const bowlers = players.filter(p => p.role === 'bowler').length;
   const wicketKeepersCount = players.filter(p => p.isWicketKeeper).length;
   const total = players.length;

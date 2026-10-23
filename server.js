@@ -40,7 +40,7 @@ function writeData(data) {
 function getTeamStats(team) {
   const players = team.players || [];
   const batsmenCount = players.filter(p => p.role === 'batsman').length;
-  const allRoundersCount = players.filter(p => p.role === 'allRounder').length;
+  const allRoundersCount = players.filter(p => p.role === 'allRounder' || p.role === 'battingAllRounder' || p.role === 'bowlingAllRounder').length;
   const bowlersCount = players.filter(p => p.role === 'bowler').length;
   const wicketKeepersCount = players.filter(p => p.isWicketKeeper).length;
   const totalCount = players.length;
