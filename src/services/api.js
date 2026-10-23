@@ -1,5 +1,5 @@
 // API service with automatic fallback to localStorage for zero-config static hosting
-const STORAGE_KEY = 'next_ias_cricket_tournament_data_v1';
+const STORAGE_KEY = 'next_ias_cricket_tournament_data_v5';
 
 const INITIAL_FALLBACK_DATA = {
   tournament: {
@@ -11,19 +11,19 @@ const INITIAL_FALLBACK_DATA = {
     totalExpectedPlayers: 108,
     rosterSlotsPerTeam: 13,
     slotBreakdown: { batsmen: 5, allRounders: 4, bowlers: 4 },
-    reservePoolCapacity: 12
+    reservePoolCapacity: 4
   },
   captains: [
-    { id: "cap-1", name: "Aditya Sharma", role: "Organizer & Captain", teamId: "team-1", mobile: "+91 98112 XXXXX" },
-    { id: "cap-2", name: "Rohan Verma", role: "Organizer & Captain", teamId: "team-2", mobile: "+91 98223 XXXXX" },
-    { id: "cap-3", name: "Kunal Singh", role: "Volunteer Captain", teamId: "team-3", mobile: "+91 98334 XXXXX" },
-    { id: "cap-4", name: "Deepak Patel", role: "Volunteer Captain", teamId: "team-4", mobile: "+91 98445 XXXXX" },
-    { id: "cap-5", name: "Vikram Chauhan", role: "Volunteer Captain", teamId: "team-5", mobile: "+91 98556 XXXXX" },
-    { id: "cap-6", name: "Aman Tripathi", role: "Volunteer Captain", teamId: "team-6", mobile: "+91 98667 XXXXX" },
-    { id: "cap-7", name: "Siddharth Rao", role: "Volunteer Captain", teamId: "team-7", mobile: "+91 98778 XXXXX" },
-    { id: "cap-8", name: "Harshvardhan", role: "Volunteer Captain", teamId: "team-8", mobile: "+91 98889 XXXXX" },
-    { id: "cap-9", name: "Pooja Mishra", role: "Tournament Co-Director", teamId: null, mobile: "+91 98990 XXXXX" },
-    { id: "cap-10", name: "Rahul Deshmukh", role: "Match Referee / Ops Lead", teamId: null, mobile: "+91 98001 XXXXX" }
+    { id: "cap-1", name: "Adwitya", role: "Team Captain", teamId: "team-1", mobile: "8700608044" },
+    { id: "cap-2", name: "Amrendar", role: "Team Captain", teamId: "team-2", mobile: "9602683688" },
+    { id: "cap-3", name: "Jatin Singh", role: "Team Captain", teamId: "team-3", mobile: "6205459492" },
+    { id: "cap-4", name: "Nikhil", role: "Team Captain", teamId: "team-4", mobile: "6386282800" },
+    { id: "cap-5", name: "Ravi", role: "Team Captain", teamId: "team-5", mobile: "8310342290" },
+    { id: "cap-6", name: "Satyam", role: "Team Captain", teamId: "team-6", mobile: "9219832109" },
+    { id: "cap-7", name: "Siddharth", role: "Team Captain", teamId: "team-7", mobile: "7717706744" },
+    { id: "cap-8", name: "Vansh", role: "Team Captain", teamId: "team-8", mobile: "7828035527" },
+    { id: "cap-9", name: "Organizer 1", role: "Tournament Organizer & Director", teamId: null, mobile: "+91 98990 XXXXX" },
+    { id: "cap-10", name: "Organizer 2", role: "Tournament Organizer & Operations", teamId: null, mobile: "+91 98001 XXXXX" }
   ],
   teams: [
     {
@@ -33,9 +33,9 @@ const INITIAL_FALLBACK_DATA = {
       tagline: "Discipline. Dominance. Victory.",
       color: "from-red-600 to-rose-900",
       accentColor: "#ED1C24",
-      captainName: "Aditya Sharma (Organizer)",
+      captainName: "Adwitya (Captain)",
       players: [
-        { id: "p-cap-1", name: "Aditya Sharma", rollNo: "NEXT-ORG-01", role: "allRounder", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Medium", mobile: "9811200001", isCaptain: true, attendance: "Confirmed", teamId: "team-1" }
+        { id: "p-cap-1", name: "Adwitya", rollNo: "CAPT-01", role: "allRounder", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Medium", mobile: "8700608044", isCaptain: true, attendance: "Confirmed", teamId: "team-1" }
       ]
     },
     {
@@ -45,9 +45,9 @@ const INITIAL_FALLBACK_DATA = {
       tagline: "Class, Grace & Relentless Focus",
       color: "from-blue-700 to-indigo-950",
       accentColor: "#0267B1",
-      captainName: "Rohan Verma (Organizer)",
+      captainName: "Amrendar (Captain)",
       players: [
-        { id: "p-cap-2", name: "Rohan Verma", rollNo: "NEXT-ORG-02", role: "batsman", isWicketKeeper: true, battingStyle: "Right Hand", bowlingStyle: "None", mobile: "9822300002", isCaptain: true, attendance: "Confirmed", teamId: "team-2" }
+        { id: "p-cap-2", name: "Amrendar", rollNo: "CAPT-02", role: "batsman", isWicketKeeper: true, battingStyle: "Right Hand", bowlingStyle: "None", mobile: "9602683688", isCaptain: true, attendance: "Confirmed", teamId: "team-2" }
       ]
     },
     {
@@ -57,9 +57,9 @@ const INITIAL_FALLBACK_DATA = {
       tagline: "Aggression with Academic Calm",
       color: "from-amber-500 to-yellow-800",
       accentColor: "#F59E0B",
-      captainName: "Kunal Singh (Volunteer Captain)",
+      captainName: "Jatin Singh (Captain)",
       players: [
-        { id: "p-cap-3", name: "Kunal Singh", rollNo: "NEXT-VOL-03", role: "bowler", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Fast", mobile: "9833400003", isCaptain: true, attendance: "Confirmed", teamId: "team-3" }
+        { id: "p-cap-3", name: "Jatin Singh", rollNo: "CAPT-03", role: "bowler", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Fast", mobile: "6205459492", isCaptain: true, attendance: "Confirmed", teamId: "team-3" }
       ]
     },
     {
@@ -69,9 +69,9 @@ const INITIAL_FALLBACK_DATA = {
       tagline: "Precision Bowling & Boundary Blitz",
       color: "from-emerald-600 to-teal-900",
       accentColor: "#10B981",
-      captainName: "Deepak Patel (Volunteer Captain)",
+      captainName: "Nikhil (Captain)",
       players: [
-        { id: "p-cap-4", name: "Deepak Patel", rollNo: "NEXT-VOL-04", role: "allRounder", isWicketKeeper: false, battingStyle: "Left Hand", bowlingStyle: "Right-arm Off Spin", mobile: "9844500004", isCaptain: true, attendance: "Confirmed", teamId: "team-4" }
+        { id: "p-cap-4", name: "Nikhil", rollNo: "CAPT-04", role: "allRounder", isWicketKeeper: false, battingStyle: "Left Hand", bowlingStyle: "Right-arm Off Spin", mobile: "6386282800", isCaptain: true, attendance: "Confirmed", teamId: "team-4" }
       ]
     },
     {
@@ -81,9 +81,9 @@ const INITIAL_FALLBACK_DATA = {
       tagline: "High Aptitude & Fearless Boundaries",
       color: "from-purple-600 to-violet-950",
       accentColor: "#7C3AED",
-      captainName: "Vikram Chauhan (Volunteer Captain)",
+      captainName: "Ravi (Captain)",
       players: [
-        { id: "p-cap-5", name: "Vikram Chauhan", rollNo: "NEXT-VOL-05", role: "batsman", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "None", mobile: "9855600005", isCaptain: true, attendance: "Confirmed", teamId: "team-5" }
+        { id: "p-cap-5", name: "Ravi", rollNo: "CAPT-05", role: "batsman", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "None", mobile: "8310342290", isCaptain: true, attendance: "Confirmed", teamId: "team-5" }
       ]
     },
     {
@@ -93,9 +93,9 @@ const INITIAL_FALLBACK_DATA = {
       tagline: "Destination Mussoorie, Target Cup",
       color: "from-cyan-600 to-blue-900",
       accentColor: "#0891B2",
-      captainName: "Aman Tripathi (Volunteer Captain)",
+      captainName: "Satyam (Captain)",
       players: [
-        { id: "p-cap-6", name: "Aman Tripathi", rollNo: "NEXT-VOL-06", role: "bowler", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Left-arm Orthodox", mobile: "9866700006", isCaptain: true, attendance: "Confirmed", teamId: "team-6" }
+        { id: "p-cap-6", name: "Satyam", rollNo: "CAPT-06", role: "bowler", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Left-arm Orthodox", mobile: "9219832109", isCaptain: true, attendance: "Confirmed", teamId: "team-6" }
       ]
     },
     {
@@ -105,9 +105,9 @@ const INITIAL_FALLBACK_DATA = {
       tagline: "Midnight Revisions & Matchwinners",
       color: "from-rose-600 to-pink-950",
       accentColor: "#E11D48",
-      captainName: "Siddharth Rao (Volunteer Captain)",
+      captainName: "Siddharth (Captain)",
       players: [
-        { id: "p-cap-7", name: "Siddharth Rao", rollNo: "NEXT-VOL-07", role: "allRounder", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Fast Medium", mobile: "9877800007", isCaptain: true, attendance: "Confirmed", teamId: "team-7" }
+        { id: "p-cap-7", name: "Siddharth", rollNo: "CAPT-07", role: "allRounder", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Fast Medium", mobile: "7717706744", isCaptain: true, attendance: "Confirmed", teamId: "team-7" }
       ]
     },
     {
@@ -117,15 +117,13 @@ const INITIAL_FALLBACK_DATA = {
       tagline: "Clearing Cut-offs & Clearing Boundaries",
       color: "from-orange-600 to-amber-900",
       accentColor: "#EA580C",
-      captainName: "Harshvardhan (Volunteer Captain)",
+      captainName: "Vansh (Captain)",
       players: [
-        { id: "p-cap-8", name: "Harshvardhan", rollNo: "NEXT-VOL-08", role: "batsman", isWicketKeeper: true, battingStyle: "Left Hand", bowlingStyle: "None", mobile: "9888900008", isCaptain: true, attendance: "Confirmed", teamId: "team-8" }
+        { id: "p-cap-8", name: "Vansh", rollNo: "CAPT-08", role: "batsman", isWicketKeeper: true, battingStyle: "Left Hand", bowlingStyle: "None", mobile: "7828035527", isCaptain: true, attendance: "Confirmed", teamId: "team-8" }
       ]
     }
   ],
-  reservePool: [
-    { id: "res-1", name: "Arjun Nair", rollNo: "GS-2026-089", role: "allRounder", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Leg Break", mobile: "9800000001", teamId: "reserve", attendance: "Confirmed", registeredAt: "2026-10-21T12:00:00.000Z" }
-  ],
+  reservePool: [],
   fixtures: [
     {
       id: "m-1",
