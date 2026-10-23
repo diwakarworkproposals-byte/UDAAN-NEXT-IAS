@@ -280,6 +280,7 @@ export default function App() {
         onClose={() => setIsRegisterOpen(false)}
         teams={data.teams}
         preselectedTeamId={preselectedTeamId}
+        reservePoolCount={data.reservePool ? data.reservePool.length : 0}
         onRegistered={handleRegistrationSubmit}
       />
 

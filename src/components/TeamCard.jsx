@@ -40,6 +40,11 @@ export default function TeamCard({ team, onSelectTeam }) {
                 (C)
               </span>
             )}
+            {(player.isExtra || player.attendance === 'Not Sure') && (
+              <span className="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 font-extrabold px-1.5 rounded flex-shrink-0" title="Marked Not Sure (Extra / Bench)">
+                EXTRA
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-1 text-[10px] text-slate-500 font-medium flex-shrink-0 pl-1">
             <span>{player.battingStyle === 'Left Hand' ? 'LHB' : 'RHB'}</span>

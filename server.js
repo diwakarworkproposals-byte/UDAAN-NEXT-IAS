@@ -130,51 +130,54 @@ app.get('/api/public-data', (req, res) => {
   });
 });
 
-// 2. REGISTRATION ENDPOINT (Validates slots, allows reserve overflow)
+// 2. REGISTRATION ENDPOINT (Validates slots, handles Surely Join vs Not Sure Extras, and 4-slot reserve limit)
 app.post('/api/register', (req, res) => {
   const {
     name,
     rollNo,
-    mobile,
-    whatsapp,
     role,
     isWicketKeeper,
     battingStyle,
     bowlingStyle,
     preferredTeamId,
-    joinReserveIfFull
+    availability, // 'Surely Join' | 'Not Sure'
+    extraDestination // 'team' | 'reserve'
   } = req.body;
 
-  if (!name || !mobile || !role) {
-    return res.status(400).json({ error: 'Name, mobile number, and role are mandatory.' });
-  }
-
-  const cleanMobile = String(mobile).trim().replace(/\D/g, '').slice(-10);
-  if (cleanMobile.length < 10) {
-    return res.status(400).json({ error: 'Please provide a valid 10-digit mobile number.' });
+  if (!name || !rollNo || !role) {
+    return res.status(400).json({ error: 'Name, Roll Number/Batch, and Role are mandatory.' });
   }
 
   const data = readData();
+  const cleanRollNo = String(rollNo).trim().toLowerCase();
+  const cleanName = String(name).trim().toLowerCase();
 
-  // Check if player with this mobile number already registered
-  let existingPlayer = null;
-  for (const t of data.teams) {
-    const found = (t.players || []).find(p => String(p.mobile).replace(/\D/g, '').slice(-10) === cleanMobile);
-    if (found) {
-      existingPlayer = { ...found, teamName: t.name };
-      break;
-    }
-  }
-  if (!existingPlayer) {
-    const foundReserve = (data.reservePool || []).find(p => String(p.mobile).replace(/\D/g, '').slice(-10) === cleanMobile);
-    if (foundReserve) {
-      existingPlayer = { ...foundReserve, teamName: 'Central Reserve Pool' };
-    }
-  }
+  // Check duplicate
+  let duplicate = false;
+  (data.teams || []).forEach(t => {
+    if ((t.players || []).some(p => 
+      (cleanRollNo && String(p.rollNo || '').trim().toLowerCase() === cleanRollNo) ||
+      (String(p.name || '').trim().toLowerCase() === cleanName)
+    )) duplicate = true;
+  });
+  if ((data.reservePool || []).some(p => 
+    (cleanRollNo && String(p.rollNo || '').trim().toLowerCase() === cleanRollNo) ||
+    (String(p.name || '').trim().toLowerCase() === cleanName)
+  )) duplicate = true;
 
-  if (existingPlayer) {
+  if (duplicate) {
     return res.status(400).json({
-      error: `This mobile number is already registered under ${existingPlayer.name} (${existingPlayer.teamName}). Contact organizers for team changes.`
+      error: `A candidate with this Name or Roll Number is already registered. Please contact organizers if you need adjustments.`
+    });
+  }
+
+  const isNotSure = availability === 'Not Sure';
+  const isReserveDestination = (preferredTeamId === 'reserve') || (isNotSure && extraDestination === 'reserve');
+  const isReserveFull = (data.reservePool || []).length >= 4;
+
+  if (isReserveDestination && isReserveFull) {
+    return res.status(400).json({
+      error: 'The Central Reserve Pool is currently full (4/4 students max). Please choose an official team to join as an Extra.'
     });
   }
 
@@ -182,25 +185,25 @@ app.post('/api/register', (req, res) => {
   const newPlayer = {
     id: newPlayerId,
     name: name.trim(),
-    rollNo: rollNo ? rollNo.trim() : 'N/A',
-    role, // 'batsman' | 'allRounder' | 'bowler'
+    rollNo: rollNo.trim(),
+    role,
     isWicketKeeper: !!isWicketKeeper,
     battingStyle: battingStyle || 'Right Hand',
     bowlingStyle: bowlingStyle || 'None',
-    mobile: cleanMobile,
-    whatsapp: whatsapp ? String(whatsapp).trim().replace(/\D/g, '').slice(-10) : cleanMobile,
-    attendance: 'Confirmed',
+    attendance: isNotSure ? 'Not Sure' : 'Confirmed',
+    isExtra: isNotSure,
     registeredAt: new Date().toISOString()
   };
 
-  // Check target team or reserve
-  if (preferredTeamId === 'reserve') {
+  // If reserve destination
+  if (isReserveDestination) {
     newPlayer.teamId = 'reserve';
+    if (!data.reservePool) data.reservePool = [];
     data.reservePool.push(newPlayer);
     writeData(data);
     return res.json({
       success: true,
-      message: 'Successfully registered into the Central Reserve Pool!',
+      message: 'Successfully registered into the Central Reserve Pool (Standby)!',
       player: newPlayer,
       assignedTo: 'Central Reserve Pool'
     });
@@ -211,9 +214,23 @@ app.post('/api/register', (req, res) => {
     return res.status(400).json({ error: 'Selected team does not exist.' });
   }
 
-  const stats = getTeamStats(targetTeam);
+  if (!targetTeam.players) targetTeam.players = [];
 
-  // Check role slot availability
+  // If student selected "Not Sure", place as EXTRA directly in the team
+  if (isNotSure) {
+    newPlayer.teamId = targetTeam.id;
+    targetTeam.players.push(newPlayer);
+    writeData(data);
+    return res.json({
+      success: true,
+      message: `Registered as an EXTRA for ${targetTeam.name}! You are tagged with an [EXTRA] badge on the team roster.`,
+      player: newPlayer,
+      assignedTo: targetTeam.name
+    });
+  }
+
+  // Surely Join: check role slot availability
+  const stats = getTeamStats(targetTeam);
   let slotAvailable = false;
   if (role === 'batsman' && stats.available.batsmen > 0) slotAvailable = true;
   if (role === 'allRounder' && stats.available.allRounders > 0) slotAvailable = true;
@@ -225,29 +242,15 @@ app.post('/api/register', (req, res) => {
     writeData(data);
     return res.json({
       success: true,
-      message: `Congratulations! You have been allocated a spot in ${targetTeam.name}!`,
+      message: `Congratulations! You have been confirmed in the playing roster of ${targetTeam.name}!`,
       player: newPlayer,
       assignedTo: targetTeam.name
     });
   } else {
-    // Slot is full!
-    if (joinReserveIfFull) {
-      newPlayer.teamId = 'reserve';
-      newPlayer.reserveNote = `Requested ${targetTeam.name} (${role}), but slots were full.`;
-      data.reservePool.push(newPlayer);
-      writeData(data);
-      return res.json({
-        success: true,
-        message: `The ${role} slot for ${targetTeam.name} was already full. You have been placed in the Central Reserve Pool. Organizers may rebalance you.`,
-        player: newPlayer,
-        assignedTo: 'Central Reserve Pool'
-      });
-    } else {
-      return res.status(409).json({
-        error: `All ${role} slots for ${targetTeam.name} are currently full!`,
-        available: stats.available
-      });
-    }
+    return res.status(409).json({
+      error: `All ${role} slots for ${targetTeam.name} are currently full! Please choose another team or register as an Extra.`,
+      available: stats.available
+    });
   }
 });
 

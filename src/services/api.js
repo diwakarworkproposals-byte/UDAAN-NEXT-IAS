@@ -263,43 +263,80 @@ export const api = {
 
     // Static Hosting / LocalStorage handling
     const data = getLocalData();
-    const cleanMobile = String(registrationData.mobile).trim().replace(/\D/g, '').slice(-10);
+    const cleanRollNo = String(registrationData.rollNo || '').trim().toLowerCase();
+    const cleanName = String(registrationData.name || '').trim().toLowerCase();
 
-    // Check duplicates
+    // Check duplicates by roll number or name
     let duplicate = false;
     (data.teams || []).forEach(t => {
-      if ((t.players || []).some(p => String(p.mobile).slice(-10) === cleanMobile)) duplicate = true;
+      if ((t.players || []).some(p => 
+        (cleanRollNo && String(p.rollNo || '').trim().toLowerCase() === cleanRollNo) ||
+        (String(p.name || '').trim().toLowerCase() === cleanName)
+      )) duplicate = true;
     });
-    if ((data.reservePool || []).some(p => String(p.mobile).slice(-10) === cleanMobile)) duplicate = true;
+    if ((data.reservePool || []).some(p => 
+      (cleanRollNo && String(p.rollNo || '').trim().toLowerCase() === cleanRollNo) ||
+      (String(p.name || '').trim().toLowerCase() === cleanName)
+    )) duplicate = true;
 
     if (duplicate) {
-      throw new Error('This mobile number is already registered. Please contact organizers.');
+      throw new Error(`A student with this Name / Roll No is already registered. Please contact organizers if you need to make changes.`);
+    }
+
+    const isNotSure = registrationData.availability === 'Not Sure';
+    const isReserveDestination = (registrationData.preferredTeamId === 'reserve') || (isNotSure && registrationData.extraDestination === 'reserve');
+    const isReserveFull = (data.reservePool || []).length >= 4;
+
+    if (isReserveDestination && isReserveFull) {
+      throw new Error('The Central Reserve Pool is full (maximum 4 students). Please join an official team as an Extra.');
     }
 
     const newPlayer = {
       id: 'p-' + Date.now(),
-      name: registrationData.name,
-      rollNo: registrationData.rollNo || 'N/A',
+      name: registrationData.name.trim(),
+      rollNo: registrationData.rollNo ? registrationData.rollNo.trim() : 'N/A',
       role: registrationData.role,
       isWicketKeeper: !!registrationData.isWicketKeeper,
       battingStyle: registrationData.battingStyle || 'Right Hand',
       bowlingStyle: registrationData.bowlingStyle || 'None',
-      mobile: cleanMobile,
-      whatsapp: registrationData.whatsapp || cleanMobile,
-      attendance: 'Confirmed',
+      attendance: isNotSure ? 'Not Sure' : 'Confirmed',
+      isExtra: isNotSure,
       registeredAt: new Date().toISOString()
     };
 
-    if (registrationData.preferredTeamId === 'reserve') {
+    // If destination is reserve pool (and not full)
+    if (isReserveDestination) {
       newPlayer.teamId = 'reserve';
+      if (!data.reservePool) data.reservePool = [];
       data.reservePool.push(newPlayer);
       saveLocalData(data);
-      return { success: true, message: 'Registered into Central Reserve Pool!', player: newPlayer, assignedTo: 'Central Reserve Pool' };
+      return {
+        success: true,
+        message: 'Successfully registered in Central Reserve Pool (Standby)!',
+        player: newPlayer,
+        assignedTo: 'Central Reserve Pool'
+      };
     }
 
     const team = data.teams.find(t => t.id === registrationData.preferredTeamId);
     if (!team) throw new Error('Selected team not found');
 
+    if (!team.players) team.players = [];
+
+    // If student selected "Not Sure", place as EXTRA directly in the team
+    if (isNotSure) {
+      newPlayer.teamId = team.id;
+      team.players.push(newPlayer);
+      saveLocalData(data);
+      return {
+        success: true,
+        message: `Registered as an EXTRA for ${team.name}! You are tagged with an [EXTRA] badge on the team roster.`,
+        player: newPlayer,
+        assignedTo: team.name
+      };
+    }
+
+    // Surely Join: check slot availability for Playing 11
     const stats = computeTeamStats(team);
     let available = false;
     if (registrationData.role === 'batsman' && stats.available.batsmen > 0) available = true;
@@ -308,17 +345,17 @@ export const api = {
 
     if (available) {
       newPlayer.teamId = team.id;
-      if (!team.players) team.players = [];
       team.players.push(newPlayer);
       saveLocalData(data);
-      return { success: true, message: `Successfully registered for ${team.name}!`, player: newPlayer, assignedTo: team.name };
-    } else if (registrationData.joinReserveIfFull) {
-      newPlayer.teamId = 'reserve';
-      data.reservePool.push(newPlayer);
-      saveLocalData(data);
-      return { success: true, message: `Selected slot was full. Placed in Central Reserve Pool.`, player: newPlayer, assignedTo: 'Central Reserve Pool' };
+      return {
+        success: true,
+        message: `Congratulations! You have been confirmed in the playing roster of ${team.name}!`,
+        player: newPlayer,
+        assignedTo: team.name
+      };
     } else {
-      throw new Error(`The ${registrationData.role} slot in ${team.name} is full.`);
+      // Role is full
+      throw new Error(`The ${registrationData.role} slot in ${team.name} is currently full. Please select another team or join as an Extra.`);
     }
   },
 
