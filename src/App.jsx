@@ -7,15 +7,17 @@ import AdminDashboard from './components/AdminDashboard';
 import ReservePoolSection from './components/ReservePoolSection';
 import TelegramNotice from './components/TelegramNotice';
 import RulesSection from './components/RulesSection';
+import FixturesSection from './components/FixturesSection';
 import { api } from './services/api';
-import { Search, Trophy, Shield, Users, CheckCircle, RefreshCw, AlertCircle, Sparkles } from 'lucide-react';
+import { Search, Trophy, Shield, Users, CheckCircle, RefreshCw, AlertCircle, Sparkles, Flame } from 'lucide-react';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
     tournament: {},
     teams: [],
-    reservePool: []
+    reservePool: [],
+    fixtures: []
   });
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
@@ -122,6 +124,20 @@ export default function App() {
               }`}
             >
               🏏 8 Teams & Rosters ({data.teams.length})
+            </button>
+
+            <button
+              onClick={() => setActiveTab('fixtures')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 flex items-center gap-1.5 ${
+                activeTab === 'fixtures'
+                  ? 'bg-brand-navy text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <span>🏆 Fixtures & Results ({data.fixtures?.length || 7})</span>
+              {(data.fixtures || []).some(m => m.status === 'Ongoing') && (
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+              )}
             </button>
 
             <button
@@ -238,6 +254,13 @@ export default function App() {
               ))}
             </div>
           </div>
+        )}
+
+        {activeTab === 'fixtures' && (
+          <FixturesSection
+            fixtures={data.fixtures || []}
+            teams={data.teams || []}
+          />
         )}
 
         {activeTab === 'reserve' && (

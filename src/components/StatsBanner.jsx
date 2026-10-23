@@ -102,10 +102,10 @@ export default function StatsBanner({ tournament }) {
             </p>
           </div>
 
-          {/* Card 4: Captains & Organizers */}
+          {/* Card 4: Captain and Organizers */}
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 backdrop-blur-md">
             <div className="flex items-center justify-between text-slate-400 text-xs font-semibold mb-1">
-              <span>CAPTAINS & MANAGERS</span>
+              <span>CAPTAIN AND ORGANIZERS</span>
               <Flame className="w-4 h-4 text-rose-400" />
             </div>
             <div className="flex items-baseline gap-2">
@@ -113,7 +113,7 @@ export default function StatsBanner({ tournament }) {
               <span className="text-xs text-slate-400">appointed</span>
             </div>
             <div className="mt-3 flex items-center gap-1 text-[11px] text-slate-300">
-              <span>8 Field Captains + 2 Tournament Directors</span>
+              <span>8 Field Captains + 2 Organizers</span>
             </div>
             <p className="text-[11px] text-slate-400 mt-2">
               Leading teams & maintaining balance

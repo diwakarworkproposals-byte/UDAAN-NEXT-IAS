@@ -76,9 +76,9 @@ const INITIAL_FALLBACK_DATA = {
     },
     {
       id: "team-5",
-      name: "Dholpur House Knights",
-      shortName: "KNIGHTS",
-      tagline: "Interview Ready, Pitch Steady",
+      name: "CSAT Crusaders",
+      shortName: "CRUSADERS",
+      tagline: "High Aptitude & Fearless Boundaries",
       color: "from-purple-600 to-violet-950",
       accentColor: "#7C3AED",
       captainName: "Vikram Chauhan (Volunteer Captain)",
@@ -125,6 +125,141 @@ const INITIAL_FALLBACK_DATA = {
   ],
   reservePool: [
     { id: "res-1", name: "Arjun Nair", rollNo: "GS-2026-089", role: "allRounder", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Right-arm Leg Break", mobile: "9800000001", teamId: "reserve", attendance: "Confirmed", registeredAt: "2026-10-21T12:00:00.000Z" }
+  ],
+  fixtures: [
+    {
+      id: "m-1",
+      matchNumber: 1,
+      round: "Quarter-Final 1",
+      stage: "QF",
+      team1Id: "team-1",
+      team1Name: "NEXT IAS Titans",
+      team2Id: "team-2",
+      team2Name: "Rajinder Nagar Royals",
+      dateTime: "Match Day 1 • 09:00 AM",
+      venue: "NEXT IAS Sports Complex, Pitch A",
+      status: "Upcoming",
+      winnerTeamId: null,
+      winnerTeamName: null,
+      scores: { team1: "", team2: "" },
+      summary: "Winner advances to Semi-Final 1",
+      nextMatchId: "m-5",
+      nextSlot: "team1"
+    },
+    {
+      id: "m-2",
+      matchNumber: 2,
+      round: "Quarter-Final 2",
+      stage: "QF",
+      team1Id: "team-3",
+      team1Name: "Karol Bagh Kings",
+      team2Id: "team-4",
+      team2Name: "Civil Service Strikers",
+      dateTime: "Match Day 1 • 11:30 AM",
+      venue: "NEXT IAS Sports Complex, Pitch B",
+      status: "Upcoming",
+      winnerTeamId: null,
+      winnerTeamName: null,
+      scores: { team1: "", team2: "" },
+      summary: "Winner advances to Semi-Final 1",
+      nextMatchId: "m-5",
+      nextSlot: "team2"
+    },
+    {
+      id: "m-3",
+      matchNumber: 3,
+      round: "Quarter-Final 3",
+      stage: "QF",
+      team1Id: "team-5",
+      team1Name: "CSAT Crusaders",
+      team2Id: "team-6",
+      team2Name: "LBSNAA Challengers",
+      dateTime: "Match Day 1 • 02:00 PM",
+      venue: "NEXT IAS Sports Complex, Pitch A",
+      status: "Upcoming",
+      winnerTeamId: null,
+      winnerTeamName: null,
+      scores: { team1: "", team2: "" },
+      summary: "Winner advances to Semi-Final 2",
+      nextMatchId: "m-6",
+      nextSlot: "team1"
+    },
+    {
+      id: "m-4",
+      matchNumber: 4,
+      round: "Quarter-Final 4",
+      stage: "QF",
+      team1Id: "team-7",
+      team1Name: "Old Rajinder Mavericks",
+      team2Id: "team-8",
+      team2Name: "Prelims Powerhitters",
+      dateTime: "Match Day 1 • 04:30 PM",
+      venue: "NEXT IAS Sports Complex, Pitch B",
+      status: "Upcoming",
+      winnerTeamId: null,
+      winnerTeamName: null,
+      scores: { team1: "", team2: "" },
+      summary: "Winner advances to Semi-Final 2",
+      nextMatchId: "m-6",
+      nextSlot: "team2"
+    },
+    {
+      id: "m-5",
+      matchNumber: 5,
+      round: "Semi-Final 1",
+      stage: "SF",
+      team1Id: null,
+      team1Name: "Winner QF 1",
+      team2Id: null,
+      team2Name: "Winner QF 2",
+      dateTime: "Match Day 2 • 10:00 AM",
+      venue: "NEXT IAS Championship Oval",
+      status: "Upcoming",
+      winnerTeamId: null,
+      winnerTeamName: null,
+      scores: { team1: "", team2: "" },
+      summary: "Winner qualifies for Grand Finale",
+      nextMatchId: "m-7",
+      nextSlot: "team1"
+    },
+    {
+      id: "m-6",
+      matchNumber: 6,
+      round: "Semi-Final 2",
+      stage: "SF",
+      team1Id: null,
+      team1Name: "Winner QF 3",
+      team2Id: null,
+      team2Name: "Winner QF 4",
+      dateTime: "Match Day 2 • 01:30 PM",
+      venue: "NEXT IAS Championship Oval",
+      status: "Upcoming",
+      winnerTeamId: null,
+      winnerTeamName: null,
+      scores: { team1: "", team2: "" },
+      summary: "Winner qualifies for Grand Finale",
+      nextMatchId: "m-7",
+      nextSlot: "team2"
+    },
+    {
+      id: "m-7",
+      matchNumber: 7,
+      round: "Grand Finale 🏆",
+      stage: "FINAL",
+      team1Id: null,
+      team1Name: "Winner SF 1",
+      team2Id: null,
+      team2Name: "Winner SF 2",
+      dateTime: "Match Day 2 • 05:00 PM",
+      venue: "NEXT IAS Championship Oval (Floodlights)",
+      status: "Upcoming",
+      winnerTeamId: null,
+      winnerTeamName: null,
+      scores: { team1: "", team2: "" },
+      summary: "Tournament Championship Trophy Match",
+      nextMatchId: null,
+      nextSlot: null
+    }
   ]
 };
 
@@ -141,6 +276,20 @@ function getLocalData() {
     try {
       const parsed = JSON.parse(local);
       if (parsed && parsed.teams && parsed.teams.length > 0) {
+        if (!parsed.fixtures || parsed.fixtures.length === 0) {
+          parsed.fixtures = INITIAL_FALLBACK_DATA.fixtures;
+        }
+        // Ensure CSAT Crusaders rename takes effect in existing caches
+        const team5 = parsed.teams.find(t => t.id === 'team-5');
+        if (team5 && (team5.name.includes('Dholpur') || team5.shortName === 'KNIGHTS')) {
+          team5.name = 'CSAT Crusaders';
+          team5.shortName = 'CRUSADERS';
+          team5.tagline = 'High Aptitude & Fearless Boundaries';
+        }
+        const qf3 = parsed.fixtures.find(f => f.id === 'm-3');
+        if (qf3 && qf3.team1Name && qf3.team1Name.includes('Dholpur')) {
+          qf3.team1Name = 'CSAT Crusaders';
+        }
         return parsed;
       }
     } catch (e) {
@@ -221,8 +370,50 @@ function formatSanitizedData(data) {
     },
     teams: sanitizedTeams,
     reservePool: sanitizedReserve,
-    captainsList: data.captains || []
+    captainsList: data.captains || [],
+    fixtures: data.fixtures || INITIAL_FALLBACK_DATA.fixtures || []
   };
+}
+
+function advanceKnockoutFixtures(fixtures, teams) {
+  for (let pass = 0; pass < 2; pass++) {
+    for (const match of fixtures) {
+      if (match.nextMatchId) {
+        const nextMatch = fixtures.find(f => f.id === match.nextMatchId);
+        if (nextMatch) {
+          if (match.winnerTeamId) {
+            const team = teams.find(t => t.id === match.winnerTeamId);
+            const teamName = team ? team.name : match.winnerTeamName || (match.winnerTeamId === match.team1Id ? match.team1Name : match.team2Name);
+            if (match.nextSlot === 'team1') {
+              nextMatch.team1Id = match.winnerTeamId;
+              nextMatch.team1Name = teamName;
+            } else if (match.nextSlot === 'team2') {
+              nextMatch.team2Id = match.winnerTeamId;
+              nextMatch.team2Name = teamName;
+            }
+          } else {
+            // Revert slot if winner cleared
+            if (match.nextSlot === 'team1' && nextMatch.team1Id) {
+              if (nextMatch.winnerTeamId === nextMatch.team1Id) {
+                nextMatch.winnerTeamId = null;
+                nextMatch.winnerTeamName = null;
+              }
+              nextMatch.team1Id = null;
+              nextMatch.team1Name = `Winner ${match.round}`;
+            } else if (match.nextSlot === 'team2' && nextMatch.team2Id) {
+              if (nextMatch.winnerTeamId === nextMatch.team2Id) {
+                nextMatch.winnerTeamId = null;
+                nextMatch.winnerTeamName = null;
+              }
+              nextMatch.team2Id = null;
+              nextMatch.team2Name = `Winner ${match.round}`;
+            }
+          }
+        }
+      }
+    }
+  }
+  return fixtures;
 }
 
 export const api = {
@@ -449,5 +640,57 @@ export const api = {
       return { success: true, player };
     }
     throw new Error('Player not found');
+  },
+
+  // Update match fixture (status, score, winner) and auto-advance
+  async updateMatch(pin, matchPayload) {
+    if (!isStaticHosting()) {
+      try {
+        const res = await fetch('/api/admin/update-match', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-organizer-pin': pin
+          },
+          body: JSON.stringify(matchPayload)
+        });
+        if (res.ok) return await res.json();
+      } catch (e) {
+        // fallback to local
+      }
+    }
+
+    const data = getLocalData();
+    data.fixtures = data.fixtures || INITIAL_FALLBACK_DATA.fixtures;
+    const match = data.fixtures.find(m => m.id === matchPayload.matchId);
+    if (!match) throw new Error('Match fixture not found');
+
+    if (matchPayload.status) match.status = matchPayload.status;
+    if (matchPayload.scores) match.scores = { ...match.scores, ...matchPayload.scores };
+    if (matchPayload.summary !== undefined) match.summary = matchPayload.summary;
+
+    if (matchPayload.winnerTeamId !== undefined) {
+      if (matchPayload.winnerTeamId) {
+        match.winnerTeamId = matchPayload.winnerTeamId;
+        const team = (data.teams || []).find(t => t.id === matchPayload.winnerTeamId);
+        match.winnerTeamName = team ? team.name : (matchPayload.winnerTeamId === match.team1Id ? match.team1Name : match.team2Name);
+        match.status = 'Completed';
+      } else {
+        match.winnerTeamId = null;
+        match.winnerTeamName = null;
+      }
+    }
+
+    data.fixtures = advanceKnockoutFixtures(data.fixtures, data.teams || []);
+    saveLocalData(data);
+    return { success: true, fixtures: data.fixtures };
+  },
+
+  // Reset fixtures back to initial tournament schedule
+  async resetFixtures(pin) {
+    const data = getLocalData();
+    data.fixtures = JSON.parse(JSON.stringify(INITIAL_FALLBACK_DATA.fixtures));
+    saveLocalData(data);
+    return { success: true, fixtures: data.fixtures };
   }
 };

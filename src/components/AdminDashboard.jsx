@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, Unlock, Download, Search, Filter, Phone, MessageSquare, ArrowRightLeft, Check, AlertCircle, RefreshCw, X, Shield, Users } from 'lucide-react';
+import { Lock, Unlock, Download, Search, Filter, Phone, MessageSquare, ArrowRightLeft, Check, AlertCircle, RefreshCw, X, Shield, Users, Trophy, Award, Sparkles, Clock, Calendar, CheckCircle2 } from 'lucide-react';
 import { api } from '../services/api';
 
 export default function AdminDashboard({ isOpen, onClose, teams, reservePool, onDataChanged }) {
@@ -8,6 +8,8 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
   const [loginError, setLoginError] = useState('');
   const [adminData, setAdminData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [adminTab, setAdminTab] = useState('candidates'); // 'candidates' | 'fixtures'
+  const [matchForms, setMatchForms] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeamFilter, setSelectedTeamFilter] = useState('ALL');
   const [selectedRoleFilter, setSelectedRoleFilter] = useState('ALL');
@@ -22,6 +24,23 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
       loadAdminData(savedPin);
     }
   }, []);
+
+  // Sync match forms with fixtures whenever adminData changes
+  useEffect(() => {
+    if (adminData && adminData.fixtures) {
+      const forms = {};
+      adminData.fixtures.forEach(m => {
+        forms[m.id] = {
+          status: m.status || 'Upcoming',
+          winnerTeamId: m.winnerTeamId || '',
+          team1Score: m.scores?.team1 || '',
+          team2Score: m.scores?.team2 || '',
+          summary: m.summary || ''
+        };
+      });
+      setMatchForms(forms);
+    }
+  }, [adminData]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -52,6 +71,60 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
       setIsAuthenticated(true);
     } catch (err) {
       setLoginError('Failed to load organizer data.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateMatchField = (matchId, field, value) => {
+    setMatchForms(prev => ({
+      ...prev,
+      [matchId]: {
+        ...(prev[matchId] || {}),
+        [field]: value
+      }
+    }));
+  };
+
+  const handleSaveMatch = async (matchId) => {
+    const form = matchForms[matchId];
+    if (!form) return;
+
+    try {
+      setLoading(true);
+      await api.updateMatch(pin, {
+        matchId,
+        status: form.status,
+        winnerTeamId: form.winnerTeamId || null,
+        scores: {
+          team1: form.team1Score,
+          team2: form.team2Score
+        },
+        summary: form.summary
+      });
+
+      setActionSuccessMessage('Match result updated & next fixtures auto-generated!');
+      setTimeout(() => setActionSuccessMessage(''), 4000);
+      await loadAdminData(pin);
+      if (onDataChanged) onDataChanged();
+    } catch (err) {
+      alert('Error updating match: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetAllFixtures = async () => {
+    if (!window.confirm('Reset all tournament matches back to the initial knockout schedule?')) return;
+    try {
+      setLoading(true);
+      await api.resetFixtures(pin);
+      setActionSuccessMessage('All fixtures have been reset to initial tournament draw.');
+      setTimeout(() => setActionSuccessMessage(''), 4000);
+      await loadAdminData(pin);
+      if (onDataChanged) onDataChanged();
+    } catch (err) {
+      alert('Error resetting fixtures: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -243,7 +316,56 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
         ) : (
           /* Authenticated Dashboard View */
           <div className="flex-1 overflow-hidden flex flex-col p-4 sm:p-6 bg-slate-50">
-            
+
+            {/* Notification Banner */}
+            {actionSuccessMessage && (
+              <div className="mb-4 p-3 bg-emerald-100 border border-emerald-300 text-emerald-900 rounded-xl text-xs font-bold flex items-center gap-2 animate-in fade-in">
+                <CheckCircle2 className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+                <span>{actionSuccessMessage}</span>
+              </div>
+            )}
+
+            {/* Sub-Navigation Tabs */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <button
+                  onClick={() => setAdminTab('candidates')}
+                  className={`flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 ${
+                    adminTab === 'candidates'
+                      ? 'bg-brand-navy text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Users className="w-4 h-4" />
+                  <span>Candidate Directory & Attendance</span>
+                </button>
+
+                <button
+                  onClick={() => setAdminTab('fixtures')}
+                  className={`flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 ${
+                    adminTab === 'fixtures'
+                      ? 'bg-brand-navy text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Trophy className="w-4 h-4" />
+                  <span>Knockout Fixtures & Results</span>
+                </button>
+              </div>
+
+              {adminTab === 'fixtures' && (
+                <button
+                  onClick={handleResetAllFixtures}
+                  className="px-3 py-1.5 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-bold transition"
+                  title="Reset all matches back to initial state"
+                >
+                  Reset All Fixtures
+                </button>
+              )}
+            </div>
+
+            {adminTab === 'candidates' ? (
+              <>
             {/* Top Toolbar: Search, Filters & Export */}
             <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-4 space-y-3">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -470,6 +592,218 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
                 </table>
               </div>
             </div>
+            </>
+          ) : (
+            /* Fixtures Management Section */
+            <div className="flex-1 overflow-y-auto space-y-6 pr-1">
+              
+              {/* Notice Banner */}
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold flex-shrink-0 mt-0.5 shadow-sm">
+                  ⚡
+                </div>
+                <div className="text-xs">
+                  <h4 className="font-extrabold text-amber-950">Auto-Generating Knockout Match Engine</h4>
+                  <p className="text-amber-800 mt-0.5">
+                    Select the winning team for any completed match and click <strong>"Save & Advance Match"</strong>. The winning team will automatically advance to the Semi-Finals and Grand Finale!
+                  </p>
+                </div>
+              </div>
+
+              {/* Match Cards Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                {(adminData?.fixtures || []).map((match) => {
+                  const form = matchForms[match.id] || {
+                    status: match.status || 'Upcoming',
+                    winnerTeamId: match.winnerTeamId || '',
+                    team1Score: match.scores?.team1 || '',
+                    team2Score: match.scores?.team2 || '',
+                    summary: match.summary || ''
+                  };
+
+                  return (
+                    <div
+                      key={match.id}
+                      className={`bg-white rounded-3xl border shadow-sm p-5 space-y-4 transition ${
+                        form.status === 'Ongoing'
+                          ? 'border-rose-400 ring-2 ring-rose-200'
+                          : form.status === 'Completed'
+                          ? 'border-emerald-300 bg-emerald-50/20'
+                          : 'border-slate-200'
+                      }`}
+                    >
+                      {/* Match Header */}
+                      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2.5 py-1 rounded-lg bg-slate-900 text-white font-mono text-xs font-black">
+                            Match {match.matchNumber}
+                          </span>
+                          <span className="font-heading font-black text-sm text-slate-900">
+                            {match.round}
+                          </span>
+                        </div>
+
+                        {/* Status Selector */}
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[11px] font-bold text-slate-500">Status:</span>
+                          <select
+                            value={form.status}
+                            onChange={(e) => handleUpdateMatchField(match.id, 'status', e.target.value)}
+                            className={`text-xs font-bold rounded-lg px-2.5 py-1 border outline-none ${
+                              form.status === 'Ongoing'
+                                ? 'bg-rose-100 text-rose-800 border-rose-300'
+                                : form.status === 'Completed'
+                                ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                                : 'bg-slate-100 text-slate-700 border-slate-300'
+                            }`}
+                          >
+                            <option value="Upcoming">⏳ Upcoming</option>
+                            <option value="Ongoing">🔴 LIVE Ongoing</option>
+                            <option value="Completed">✅ Completed</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Teams & Scores */}
+                      <div className="space-y-2.5">
+                        
+                        {/* Team 1 */}
+                        <div className={`p-3 rounded-2xl border flex items-center justify-between gap-3 ${
+                          form.winnerTeamId === match.team1Id && match.team1Id
+                            ? 'bg-amber-100/80 border-amber-400 ring-1 ring-amber-300'
+                            : 'bg-slate-50 border-slate-200'
+                        }`}>
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[10px] text-slate-400 font-bold block uppercase">Team 1</span>
+                            <span className="font-heading font-black text-xs sm:text-sm text-slate-900 truncate block">
+                              {match.team1Name || 'TBD (Winner QF)'}
+                            </span>
+                          </div>
+
+                          <div className="w-32">
+                            <input
+                              type="text"
+                              placeholder="Score (e.g. 142/6)"
+                              value={form.team1Score}
+                              onChange={(e) => handleUpdateMatchField(match.id, 'team1Score', e.target.value)}
+                              className="w-full text-xs font-mono font-bold px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white focus:ring-1 focus:ring-brand-navy outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Team 2 */}
+                        <div className={`p-3 rounded-2xl border flex items-center justify-between gap-3 ${
+                          form.winnerTeamId === match.team2Id && match.team2Id
+                            ? 'bg-amber-100/80 border-amber-400 ring-1 ring-amber-300'
+                            : 'bg-slate-50 border-slate-200'
+                        }`}>
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[10px] text-slate-400 font-bold block uppercase">Team 2</span>
+                            <span className="font-heading font-black text-xs sm:text-sm text-slate-900 truncate block">
+                              {match.team2Name || 'TBD (Winner QF)'}
+                            </span>
+                          </div>
+
+                          <div className="w-32">
+                            <input
+                              type="text"
+                              placeholder="Score (e.g. 138/8)"
+                              value={form.team2Score}
+                              onChange={(e) => handleUpdateMatchField(match.id, 'team2Score', e.target.value)}
+                              className="w-full text-xs font-mono font-bold px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white focus:ring-1 focus:ring-brand-navy outline-none"
+                            />
+                          </div>
+                        </div>
+
+                      </div>
+
+                      {/* Winner Selection */}
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold text-slate-700 block">
+                          Mark Winning Team (Auto-Advances):
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            disabled={!match.team1Id}
+                            onClick={() => handleUpdateMatchField(match.id, 'winnerTeamId', match.team1Id)}
+                            className={`px-3 py-2 rounded-xl text-xs font-bold transition truncate border ${
+                              form.winnerTeamId === match.team1Id && match.team1Id
+                                ? 'bg-amber-500 text-white border-amber-600 shadow-sm ring-2 ring-amber-300 font-black'
+                                : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200 disabled:opacity-40 disabled:cursor-not-allowed'
+                            }`}
+                          >
+                            👑 {match.team1Name ? `${match.team1Name} Won` : 'Team 1 Won'}
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={!match.team2Id}
+                            onClick={() => handleUpdateMatchField(match.id, 'winnerTeamId', match.team2Id)}
+                            className={`px-3 py-2 rounded-xl text-xs font-bold transition truncate border ${
+                              form.winnerTeamId === match.team2Id && match.team2Id
+                                ? 'bg-amber-500 text-white border-amber-600 shadow-sm ring-2 ring-amber-300 font-black'
+                                : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200 disabled:opacity-40 disabled:cursor-not-allowed'
+                            }`}
+                          >
+                            👑 {match.team2Name ? `${match.team2Name} Won` : 'Team 2 Won'}
+                          </button>
+                        </div>
+
+                        {form.winnerTeamId && (
+                          <div className="text-right">
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateMatchField(match.id, 'winnerTeamId', '')}
+                              className="text-[11px] text-rose-600 hover:underline font-semibold"
+                            >
+                              Clear Winner Selection
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Match Summary Notes */}
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                          Match Result Notes:
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g., Won by 6 runs (DLS method) or won by 4 wickets"
+                          value={form.summary}
+                          onChange={(e) => handleUpdateMatchField(match.id, 'summary', e.target.value)}
+                          className="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 bg-white focus:ring-1 focus:ring-brand-navy outline-none"
+                        />
+                      </div>
+
+                      {/* Advancement & Save Button */}
+                      <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-100">
+                        <span className="text-[11px] text-slate-500 font-medium">
+                          {match.nextMatchId ? (
+                            <span>➡️ Winner automatically advances to Match {match.nextMatchId.replace('m-', '')}</span>
+                          ) : (
+                            <span>🏆 Winner crowned Tournament Champion!</span>
+                          )}
+                        </span>
+
+                        <button
+                          type="button"
+                          disabled={loading}
+                          onClick={() => handleSaveMatch(match.id)}
+                          className="w-full sm:w-auto px-4 py-2 rounded-xl bg-brand-navy hover:bg-brand-navy-light text-white text-xs font-black shadow-sm transition"
+                        >
+                          💾 Save & Advance Match
+                        </button>
+                      </div>
+
+                    </div>
+                  );
+                })}
+              </div>
+
+            </div>
+          )}
 
           </div>
         )}

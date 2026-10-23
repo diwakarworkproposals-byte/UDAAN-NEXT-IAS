@@ -126,7 +126,8 @@ app.get('/api/public-data', (req, res) => {
       name: c.name,
       role: c.role,
       teamId: c.teamId
-    }))
+    })),
+    fixtures: data.fixtures || []
   });
 });
 
@@ -343,7 +344,83 @@ app.post('/api/admin/update-player', verifyAdminPin, (req, res) => {
   res.json({ success: true, message: 'Player updated successfully.', player: targetPlayer });
 });
 
-// 6. ADMIN EXPORT CSV
+// Auto-advance winners in knockout tournament
+function advanceKnockoutFixtures(fixtures, teams) {
+  for (let pass = 0; pass < 2; pass++) {
+    for (const match of fixtures) {
+      if (match.nextMatchId) {
+        const nextMatch = fixtures.find(f => f.id === match.nextMatchId);
+        if (nextMatch) {
+          if (match.winnerTeamId) {
+            const team = teams.find(t => t.id === match.winnerTeamId);
+            const teamName = team ? team.name : match.winnerTeamName || (match.winnerTeamId === match.team1Id ? match.team1Name : match.team2Name);
+            if (match.nextSlot === 'team1') {
+              nextMatch.team1Id = match.winnerTeamId;
+              nextMatch.team1Name = teamName;
+            } else if (match.nextSlot === 'team2') {
+              nextMatch.team2Id = match.winnerTeamId;
+              nextMatch.team2Name = teamName;
+            }
+          } else {
+            // Revert slot if winner cleared
+            if (match.nextSlot === 'team1' && nextMatch.team1Id) {
+              if (nextMatch.winnerTeamId === nextMatch.team1Id) {
+                nextMatch.winnerTeamId = null;
+                nextMatch.winnerTeamName = null;
+              }
+              nextMatch.team1Id = null;
+              nextMatch.team1Name = `Winner ${match.round}`;
+            } else if (match.nextSlot === 'team2' && nextMatch.team2Id) {
+              if (nextMatch.winnerTeamId === nextMatch.team2Id) {
+                nextMatch.winnerTeamId = null;
+                nextMatch.winnerTeamName = null;
+              }
+              nextMatch.team2Id = null;
+              nextMatch.team2Name = `Winner ${match.round}`;
+            }
+          }
+        }
+      }
+    }
+  }
+  return fixtures;
+}
+
+// 6. ADMIN UPDATE MATCH FIXTURE (Status, scores, winner, and auto-advancement)
+app.post('/api/admin/update-match', verifyAdminPin, (req, res) => {
+  const { matchId, status, winnerTeamId, scores, summary } = req.body;
+  const data = readData();
+  data.fixtures = data.fixtures || [];
+
+  const match = data.fixtures.find(m => m.id === matchId);
+  if (!match) {
+    return res.status(404).json({ error: 'Match fixture not found.' });
+  }
+
+  if (status) match.status = status;
+  if (scores) match.scores = { ...match.scores, ...scores };
+  if (summary !== undefined) match.summary = summary;
+
+  if (winnerTeamId !== undefined) {
+    if (winnerTeamId) {
+      match.winnerTeamId = winnerTeamId;
+      const team = (data.teams || []).find(t => t.id === winnerTeamId);
+      match.winnerTeamName = team ? team.name : (winnerTeamId === match.team1Id ? match.team1Name : match.team2Name);
+      match.status = 'Completed';
+    } else {
+      match.winnerTeamId = null;
+      match.winnerTeamName = null;
+    }
+  }
+
+  // Advance knockout winners to subsequent matches
+  data.fixtures = advanceKnockoutFixtures(data.fixtures, data.teams || []);
+  writeData(data);
+
+  res.json({ success: true, message: 'Match updated and next fixtures generated.', fixtures: data.fixtures });
+});
+
+// 7. ADMIN EXPORT CSV
 app.get('/api/admin/export-csv', verifyAdminPin, (req, res) => {
   const data = readData();
   const rows = [
