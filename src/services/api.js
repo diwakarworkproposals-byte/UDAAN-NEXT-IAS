@@ -295,7 +295,8 @@ export function getActiveCloudConfig() {
     // ignore
   }
 
-  const activeUrl = envFirebaseUrl || winFirebaseUrl || envApiUrl || winApiUrl || localUrl;
+  const DEFAULT_FIREBASE_URL = 'https://next-ias-tournament-default-rtdb.firebaseio.com';
+  const activeUrl = envFirebaseUrl || winFirebaseUrl || envApiUrl || winApiUrl || localUrl || DEFAULT_FIREBASE_URL;
 
   if (!activeUrl) {
     return { url: '', type: 'none', isConfigured: false, source: 'none' };
@@ -309,8 +310,9 @@ export function getActiveCloudConfig() {
     type = 'custom_api';
   }
 
-  let source = 'localStorage';
-  if (envFirebaseUrl || envApiUrl) source = 'environment';
+  let source = 'default';
+  if (localUrl) source = 'localStorage';
+  else if (envFirebaseUrl || envApiUrl) source = 'environment';
   else if (winFirebaseUrl || winApiUrl) source = 'window';
 
   return {
