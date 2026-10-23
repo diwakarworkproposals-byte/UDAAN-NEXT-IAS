@@ -411,6 +411,20 @@ function saveLocalData(data) {
   }
 }
 
+export function clearTournamentCache() {
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem('next_ias_cricket_tournament_data_v7');
+      localStorage.removeItem('next_ias_cricket_tournament_data_v6');
+      sessionStorage.removeItem('next_ias_cached_public_data');
+      console.log('[Cache] Local tournament caches successfully cleared for fresh live sync.');
+    } catch (e) {
+      // ignore
+    }
+  }
+}
+
 // ----------------------------------------------------
 // Cloud Database Helpers (Firebase Realtime DB REST API)
 // ----------------------------------------------------
@@ -418,9 +432,14 @@ async function fetchFirebaseRaw() {
   const config = getActiveCloudConfig();
   if (!config.isConfigured || config.type !== 'firebase') return null;
 
-  const endpoint = normalizeFirebaseUrl(config.url);
+  const baseUrl = normalizeFirebaseUrl(config.url);
+  const endpoint = `${baseUrl}?t=${Date.now()}`;
   const res = await fetch(endpoint, {
-    headers: { 'Accept': 'application/json' },
+    headers: {
+      'Accept': 'application/json',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache'
+    },
     cache: 'no-store'
   });
 

@@ -1,7 +1,15 @@
 import React from 'react';
 import { Shield, ArrowRight, UserPlus, CheckCircle2 } from 'lucide-react';
 
-export default function TeamCard({ team, onSelectTeam }) {
+export default function TeamCard({ team, onSelectTeam, onJoin }) {
+  const handleJoinClick = () => {
+    if (typeof onJoin === 'function') {
+      onJoin(team.id);
+    } else if (typeof onSelectTeam === 'function') {
+      onSelectTeam(team.id);
+    }
+  };
+
   const players = team.players || [];
   const batsmen = players.filter(p => p.role === 'batsman');
   const allRounders = players.filter(p => p.role === 'allRounder' || p.role === 'battingAllRounder' || p.role === 'bowlingAllRounder');
@@ -176,8 +184,9 @@ export default function TeamCard({ team, onSelectTeam }) {
           </button>
         ) : (
           <button
-            onClick={() => onSelectTeam(team.id)}
-            className="w-full py-2.5 px-3 rounded-xl bg-brand-navy hover:bg-brand-navy-light text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm active:translate-y-0.5"
+            type="button"
+            onClick={handleJoinClick}
+            className="w-full py-2.5 px-3 rounded-xl bg-brand-navy hover:bg-brand-navy-light text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm active:translate-y-0.5 cursor-pointer"
           >
             <span>Join {team.shortName}</span>
             <ArrowRight className="w-3.5 h-3.5" />

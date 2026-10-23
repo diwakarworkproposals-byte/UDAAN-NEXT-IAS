@@ -45,6 +45,16 @@ export default function RegistrationModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
 
+  // Sync preferredTeamId whenever user clicks Join on a specific team card
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(prev => ({
+        ...prev,
+        preferredTeamId: preselectedTeamId || prev.preferredTeamId || (teams[0] ? teams[0].id : 'team-1')
+      }));
+    }
+  }, [isOpen, preselectedTeamId, teams]);
+
   if (!isOpen) return null;
 
   const isReserveFull = reservePoolCount >= 4;

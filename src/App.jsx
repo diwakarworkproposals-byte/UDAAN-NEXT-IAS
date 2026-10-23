@@ -8,7 +8,7 @@ import ReservePoolSection from './components/ReservePoolSection';
 import TelegramNotice from './components/TelegramNotice';
 import RulesSection from './components/RulesSection';
 import FixturesSection from './components/FixturesSection';
-import { api, getActiveCloudConfig } from './services/api';
+import { api, getActiveCloudConfig, clearTournamentCache } from './services/api';
 import { Search, Trophy, Shield, Users, CheckCircle, RefreshCw, AlertCircle, Sparkles, Flame, Globe } from 'lucide-react';
 
 export default function App() {
@@ -62,6 +62,8 @@ export default function App() {
   };
 
   useEffect(() => {
+    // Clear any stale local cache on every page reload to force fresh Firebase sync
+    clearTournamentCache();
     fetchData(true);
 
     // Auto-polling every 8 seconds so all devices see registrations in real time
@@ -338,6 +340,7 @@ export default function App() {
                     key={team.id}
                     team={team}
                     onJoin={() => handleOpenRegisterForTeam(team.id)}
+                    onSelectTeam={() => handleOpenRegisterForTeam(team.id)}
                   />
                 ))}
               </div>
