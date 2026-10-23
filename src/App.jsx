@@ -19,7 +19,12 @@ export default function App() {
     reservePool: [],
     fixtures: []
   });
-  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.location.hash === '#register';
+    }
+    return false;
+  });
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [preselectedTeamId, setPreselectedTeamId] = useState(null);
   const [activeTab, setActiveTab] = useState(() => {
@@ -317,7 +322,12 @@ export default function App() {
       {/* 5. Modals */}
       <RegistrationModal
         isOpen={isRegisterOpen}
-        onClose={() => setIsRegisterOpen(false)}
+        onClose={() => {
+          setIsRegisterOpen(false);
+          if (typeof window !== 'undefined' && window.location.hash === '#register') {
+            window.location.hash = activeTab;
+          }
+        }}
         teams={data.teams}
         preselectedTeamId={preselectedTeamId}
         reservePoolCount={data.reservePool ? data.reservePool.length : 0}
