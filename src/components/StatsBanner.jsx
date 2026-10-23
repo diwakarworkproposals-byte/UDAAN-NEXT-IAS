@@ -3,9 +3,9 @@ import { Users, Trophy, ShieldCheck, UserCheck, Flame, Info } from 'lucide-react
 
 export default function StatsBanner({ tournament }) {
   const totalSlots = tournament.totalSlotsAcrossTeams || 104;
-  const filledSlots = tournament.totalAssignedPlayers || 8;
-  const reserveCount = tournament.totalReserve || 1;
-  const totalRegistered = tournament.totalRegistered || (filledSlots + reserveCount);
+  const filledSlots = tournament.totalAssignedPlayers !== undefined ? tournament.totalAssignedPlayers : 8;
+  const reserveCount = tournament.totalReserve !== undefined ? tournament.totalReserve : 0;
+  const totalRegistered = tournament.totalRegistered !== undefined ? tournament.totalRegistered : (filledSlots + reserveCount);
   const totalTarget = tournament.totalExpectedPlayers || 108;
 
   const percentFilled = Math.min(100, Math.round((filledSlots / totalSlots) * 100));
