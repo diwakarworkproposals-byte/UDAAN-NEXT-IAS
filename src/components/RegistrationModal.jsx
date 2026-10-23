@@ -263,14 +263,17 @@ export default function RegistrationModal({ isOpen, onClose, teams, preselectedT
                 <label className="block text-[11px] font-bold text-slate-700 mb-1">
                   Wicketkeeping Ability 🧤
                 </label>
-                <label className="flex items-center gap-2 mt-2 cursor-pointer text-xs font-semibold text-slate-800">
+                <label className="flex items-center gap-2 mt-2 cursor-pointer text-xs font-bold text-slate-800 p-1.5 rounded-lg hover:bg-slate-100 transition">
                   <input
                     type="checkbox"
                     checked={formData.isWicketKeeper}
                     onChange={(e) => setFormData({ ...formData, isWicketKeeper: e.target.checked })}
                     className="w-4 h-4 text-brand-red rounded border-slate-300 focus:ring-brand-red"
                   />
-                  <span>Can Keep Wickets</span>
+                  <span className="flex items-center gap-1">
+                    <span>🧤</span>
+                    <span>Can keep wickets</span>
+                  </span>
                 </label>
               </div>
 
