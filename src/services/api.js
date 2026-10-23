@@ -1,7 +1,11 @@
-// API service with automatic fallback to localStorage for zero-config static hosting
-const STORAGE_KEY = 'next_ias_cricket_tournament_data_v8';
+// API service with Cloud Database Synchronization (Firebase Realtime DB & Custom Backend)
+// and seamless fallback to localStorage for offline resilience.
 
-const INITIAL_FALLBACK_DATA = {
+const STORAGE_KEY = 'next_ias_cricket_tournament_data_v8';
+const CLOUD_DB_URL_KEY = 'next_ias_cloud_db_url';
+const CLOUD_DB_TYPE_KEY = 'next_ias_cloud_db_type';
+
+export const INITIAL_FALLBACK_DATA = {
   tournament: {
     name: "NEXT IAS Umang 2026",
     edition: "Cricket Tournament • Sports & Inspiration Meet",
@@ -265,6 +269,103 @@ const INITIAL_FALLBACK_DATA = {
   ]
 };
 
+// ----------------------------------------------------
+// Cloud Database Configuration & Resolution
+// ----------------------------------------------------
+export function getActiveCloudConfig() {
+  if (typeof window === 'undefined') {
+    return { url: '', type: 'none', isConfigured: false };
+  }
+
+  // 1. Build-time Vite Environment variables
+  const envFirebaseUrl = (import.meta.env?.VITE_FIREBASE_DB_URL || '').trim();
+  const envApiUrl = (import.meta.env?.VITE_API_URL || '').trim();
+
+  // 2. Global window overrides (allows runtime injection without rebuilding)
+  const winFirebaseUrl = (window.NEXT_IAS_FIREBASE_URL || '').trim();
+  const winApiUrl = (window.NEXT_IAS_API_URL || '').trim();
+
+  // 3. Saved localStorage settings from Organizer Dashboard
+  let localUrl = '';
+  let localType = '';
+  try {
+    localUrl = (localStorage.getItem(CLOUD_DB_URL_KEY) || '').trim();
+    localType = (localStorage.getItem(CLOUD_DB_TYPE_KEY) || '').trim();
+  } catch (e) {
+    // ignore
+  }
+
+  const activeUrl = envFirebaseUrl || winFirebaseUrl || envApiUrl || winApiUrl || localUrl;
+
+  if (!activeUrl) {
+    return { url: '', type: 'none', isConfigured: false, source: 'none' };
+  }
+
+  // Determine type
+  let type = localType;
+  if (activeUrl.includes('firebaseio.com') || activeUrl.includes('firebasedatabase.app')) {
+    type = 'firebase';
+  } else if (!type || type === 'none') {
+    type = 'custom_api';
+  }
+
+  let source = 'localStorage';
+  if (envFirebaseUrl || envApiUrl) source = 'environment';
+  else if (winFirebaseUrl || winApiUrl) source = 'window';
+
+  return {
+    url: activeUrl,
+    type,
+    isConfigured: true,
+    source
+  };
+}
+
+export function saveActiveCloudConfig(url, type) {
+  if (typeof window === 'undefined') return;
+  const cleanUrl = (url || '').trim();
+  let cleanType = type;
+
+  if (!cleanType) {
+    if (cleanUrl.includes('firebaseio.com') || cleanUrl.includes('firebasedatabase.app')) {
+      cleanType = 'firebase';
+    } else {
+      cleanType = 'custom_api';
+    }
+  }
+
+  if (cleanUrl) {
+    localStorage.setItem(CLOUD_DB_URL_KEY, cleanUrl);
+    localStorage.setItem(CLOUD_DB_TYPE_KEY, cleanType);
+  } else {
+    localStorage.removeItem(CLOUD_DB_URL_KEY);
+    localStorage.removeItem(CLOUD_DB_TYPE_KEY);
+  }
+
+  // Notify active components of configuration change
+  try {
+    window.dispatchEvent(new CustomEvent('next_ias_cloud_config_updated', { detail: { url: cleanUrl, type: cleanType } }));
+  } catch (e) {
+    // ignore
+  }
+}
+
+export function normalizeFirebaseUrl(url) {
+  let clean = (url || '').trim().replace(/\/+$/, '');
+  if (!clean.endsWith('.json')) {
+    clean += '/tournament_data.json';
+  }
+  return clean;
+}
+
+export function normalizeCustomApiUrl(url) {
+  let clean = (url || '').trim().replace(/\/+$/, '');
+  if (!clean.endsWith('/api')) {
+    clean += '/api';
+  }
+  return clean;
+}
+
 function isStaticHosting() {
   if (typeof window === 'undefined') return false;
   const host = window.location.hostname;
@@ -308,6 +409,74 @@ function saveLocalData(data) {
   }
 }
 
+// ----------------------------------------------------
+// Cloud Database Helpers (Firebase Realtime DB REST API)
+// ----------------------------------------------------
+async function fetchFirebaseRaw() {
+  const config = getActiveCloudConfig();
+  if (!config.isConfigured || config.type !== 'firebase') return null;
+
+  const endpoint = normalizeFirebaseUrl(config.url);
+  const res = await fetch(endpoint, {
+    headers: { 'Accept': 'application/json' },
+    cache: 'no-store'
+  });
+
+  if (!res.ok) {
+    throw new Error(`Cloud Database returned status ${res.status} (${res.statusText})`);
+  }
+
+  const cloudData = await res.json();
+  if (!cloudData || !cloudData.teams || cloudData.teams.length === 0) {
+    // Cloud database is empty or freshly initialized: seed with initial clean tournament rosters!
+    console.log('[CloudDB] Initializing empty Cloud Database with official NEXT IAS tournament rosters...');
+    await saveFirebaseRaw(INITIAL_FALLBACK_DATA);
+    return INITIAL_FALLBACK_DATA;
+  }
+
+  // Ensure CSAT Crusaders rename
+  const team5 = cloudData.teams.find(t => t.id === 'team-5');
+  if (team5 && (team5.name.includes('Dholpur') || team5.shortName === 'KNIGHTS')) {
+    team5.name = 'CSAT Crusaders';
+    team5.shortName = 'CRUSADERS';
+    team5.tagline = 'High Aptitude & Fearless Boundaries';
+  }
+
+  // Ensure fixtures exist
+  if (!cloudData.fixtures || cloudData.fixtures.length === 0) {
+    cloudData.fixtures = INITIAL_FALLBACK_DATA.fixtures;
+  }
+
+  // Update local cache
+  saveLocalData(cloudData);
+  return cloudData;
+}
+
+async function saveFirebaseRaw(data) {
+  const config = getActiveCloudConfig();
+  if (!config.isConfigured || config.type !== 'firebase') return false;
+
+  const endpoint = normalizeFirebaseUrl(config.url);
+  const res = await fetch(endpoint, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to persist data to Cloud Database (HTTP ${res.status})`);
+  }
+
+  saveLocalData(data);
+  return true;
+}
+
+// ----------------------------------------------------
+// Stats Calculation & Sanitization Helpers
+// ----------------------------------------------------
 function computeTeamStats(team) {
   const players = team.players || [];
   const batsmen = players.filter(p => p.role === 'batsman').length;
@@ -342,6 +511,7 @@ function formatSanitizedData(data) {
       bowlingStyle: p.bowlingStyle || 'None',
       isCaptain: !!p.isCaptain,
       attendance: p.attendance || 'Pending',
+      isExtra: !!p.isExtra,
       teamId: p.teamId,
       registeredAt: p.registeredAt
     }))
@@ -356,6 +526,7 @@ function formatSanitizedData(data) {
     battingStyle: p.battingStyle || 'Right Hand',
     bowlingStyle: p.bowlingStyle || 'None',
     attendance: p.attendance || 'Pending',
+    isExtra: !!p.isExtra,
     registeredAt: p.registeredAt
   }));
 
@@ -417,43 +588,240 @@ function advanceKnockoutFixtures(fixtures, teams) {
   return fixtures;
 }
 
+// ----------------------------------------------------
+// Public API Object
+// ----------------------------------------------------
 export const api = {
-  // Fetch public data (safe, stripped of student phone numbers)
-  async getPublicData() {
-    if (isStaticHosting()) {
-      return formatSanitizedData(getLocalData());
+  // Test Cloud Database connection
+  async testCloudConnection(url, type) {
+    const cleanUrl = (url || '').trim();
+    if (!cleanUrl) {
+      return { ok: false, error: 'Database URL cannot be empty.' };
     }
 
     try {
-      const res = await fetch('/api/public-data');
-      if (res.ok) {
-        return await res.json();
+      if (type === 'firebase' || cleanUrl.includes('firebaseio.com') || cleanUrl.includes('firebasedatabase.app')) {
+        const endpoint = normalizeFirebaseUrl(cleanUrl);
+        const res = await fetch(endpoint, {
+          headers: { 'Accept': 'application/json' },
+          cache: 'no-store'
+        });
+
+        if (!res.ok) {
+          return { ok: false, error: `Cloud Database returned HTTP ${res.status}: ${res.statusText}. Please verify the Firebase Realtime Database URL and ensure Read/Write Rules allow public access.` };
+        }
+
+        const data = await res.json();
+        return {
+          ok: true,
+          type: 'firebase',
+          message: 'Connection successful! Firebase Realtime Database is accessible.',
+          hasData: !!(data && data.teams)
+        };
+      } else {
+        const endpoint = `${normalizeCustomApiUrl(cleanUrl)}/public-data`;
+        const res = await fetch(endpoint, { cache: 'no-store' });
+        if (!res.ok) {
+          return { ok: false, error: `Custom Backend returned HTTP ${res.status}: ${res.statusText}.` };
+        }
+        const data = await res.json();
+        return {
+          ok: true,
+          type: 'custom_api',
+          message: 'Connection successful! Backend server is online and operational.',
+          hasData: !!(data && data.teams)
+        };
       }
     } catch (err) {
-      console.log('Using local client storage fallback for public data');
+      return { ok: false, error: `Network connection failed: ${err.message}` };
+    }
+  },
+
+  // Push pristine tournament baseline to Cloud Database
+  async seedCloudDatabase(url, type) {
+    const cleanUrl = (url || '').trim();
+    if (type === 'firebase' || cleanUrl.includes('firebaseio.com') || cleanUrl.includes('firebasedatabase.app')) {
+      const endpoint = normalizeFirebaseUrl(cleanUrl);
+      const res = await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(INITIAL_FALLBACK_DATA)
+      });
+      if (!res.ok) {
+        throw new Error(`Failed to seed Firebase (HTTP ${res.status})`);
+      }
+      saveLocalData(INITIAL_FALLBACK_DATA);
+      return true;
+    }
+    return false;
+  },
+
+  // Fetch public data (safe, stripped of student phone numbers)
+  async getPublicData() {
+    const config = getActiveCloudConfig();
+
+    // 1. Try Firebase if configured
+    if (config.isConfigured && config.type === 'firebase') {
+      try {
+        const raw = await fetchFirebaseRaw();
+        if (raw) return formatSanitizedData(raw);
+      } catch (err) {
+        console.warn('[CloudDB] Cloud fetch failed, falling back to local storage cache:', err.message);
+      }
     }
 
+    // 2. Try Custom API if configured
+    if (config.isConfigured && config.type === 'custom_api') {
+      try {
+        const endpoint = `${normalizeCustomApiUrl(config.url)}/public-data`;
+        const res = await fetch(endpoint, { cache: 'no-store' });
+        if (res.ok) {
+          const cloudData = await res.json();
+          saveLocalData(cloudData);
+          return cloudData;
+        }
+      } catch (err) {
+        console.warn('[CloudDB] Custom API fetch failed, falling back to local cache:', err.message);
+      }
+    }
+
+    // 3. Fallback to local server if running locally with server.js
+    if (!isStaticHosting() && !config.isConfigured) {
+      try {
+        const res = await fetch('/api/public-data');
+        if (res.ok) return await res.json();
+      } catch (err) {
+        // fall through
+      }
+    }
+
+    // 4. Fallback to client localStorage
     return formatSanitizedData(getLocalData());
   },
 
-  // Register student
+  // Register student globally
   async register(registrationData) {
-    if (!isStaticHosting()) {
+    const config = getActiveCloudConfig();
+
+    // 1. Handle Global Firebase Cloud Database
+    if (config.isConfigured && config.type === 'firebase') {
+      let data = null;
+      try {
+        data = await fetchFirebaseRaw();
+      } catch (e) {
+        console.warn('[CloudDB] Could not load live Firebase data, using local fallback:', e);
+      }
+      if (!data) data = getLocalData();
+
+      const cleanRollNo = String(registrationData.rollNo || '').trim().toLowerCase();
+      const cleanName = String(registrationData.name || '').trim().toLowerCase();
+
+      // Check duplicates by roll number or name
+      let duplicate = false;
+      (data.teams || []).forEach(t => {
+        if ((t.players || []).some(p => 
+          (cleanRollNo && String(p.rollNo || '').trim().toLowerCase() === cleanRollNo) ||
+          (String(p.name || '').trim().toLowerCase() === cleanName)
+        )) duplicate = true;
+      });
+      if ((data.reservePool || []).some(p => 
+        (cleanRollNo && String(p.rollNo || '').trim().toLowerCase() === cleanRollNo) ||
+        (String(p.name || '').trim().toLowerCase() === cleanName)
+      )) duplicate = true;
+
+      if (duplicate) {
+        throw new Error(`A student with this Name or Roll No is already registered globally. Please contact organizers if you need adjustments.`);
+      }
+
+      const isNotSure = registrationData.availability === 'Not Sure';
+      const isReserveDestination = (registrationData.preferredTeamId === 'reserve') || (isNotSure && registrationData.extraDestination === 'reserve');
+      const isReserveFull = (data.reservePool || []).length >= 4;
+
+      if (isReserveDestination && isReserveFull) {
+        throw new Error('The Central Reserve Pool is currently full (maximum 4 students). Please join an official team as an Extra.');
+      }
+
+      const newPlayer = {
+        id: 'p-' + Date.now(),
+        name: registrationData.name.trim(),
+        rollNo: registrationData.rollNo ? registrationData.rollNo.trim() : 'N/A',
+        role: registrationData.role,
+        isWicketKeeper: !!registrationData.isWicketKeeper,
+        battingStyle: registrationData.battingStyle || 'Right Hand',
+        bowlingStyle: registrationData.bowlingStyle || 'None',
+        attendance: isNotSure ? 'Not Sure' : 'Confirmed',
+        isExtra: isNotSure,
+        registeredAt: new Date().toISOString()
+      };
+
+      if (isReserveDestination) {
+        newPlayer.teamId = 'reserve';
+        if (!data.reservePool) data.reservePool = [];
+        data.reservePool.push(newPlayer);
+        await saveFirebaseRaw(data);
+        return {
+          success: true,
+          message: 'Successfully registered in Central Reserve Pool (Standby)!',
+          player: newPlayer,
+          assignedTo: 'Central Reserve Pool'
+        };
+      }
+
+      const team = data.teams.find(t => t.id === registrationData.preferredTeamId);
+      if (!team) throw new Error('Selected team not found');
+
+      if (!team.players) team.players = [];
+
+      // Enforce 13-player team squad limit
+      if (team.players.length >= 13) {
+        throw new Error(`${team.name} has already reached its maximum squad limit of 13 players. Please choose another team.`);
+      }
+
+      newPlayer.teamId = team.id;
+      team.players.push(newPlayer);
+      await saveFirebaseRaw(data);
+
+      return {
+        success: true,
+        message: isNotSure
+          ? `Registered as an EXTRA for ${team.name}! You are tagged with an [EXTRA] badge on the team roster.`
+          : `Congratulations! You have been confirmed in the squad of ${team.name}!`,
+        player: newPlayer,
+        assignedTo: team.name
+      };
+    }
+
+    // 2. Handle Custom Backend API
+    if (config.isConfigured && config.type === 'custom_api') {
+      const endpoint = `${normalizeCustomApiUrl(config.url)}/register`;
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(registrationData)
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Registration failed');
+      return json;
+    }
+
+    // 3. Handle Local Node server
+    if (!isStaticHosting() && !config.isConfigured) {
       try {
         const res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(registrationData)
         });
-        if (res.ok) {
-          return await res.json();
-        }
+        if (res.ok) return await res.json();
       } catch (err) {
-        // fall through to local storage
+        // fall through to local
       }
     }
 
-    // Static Hosting / LocalStorage handling
+    // 4. Static Hosting / LocalStorage fallback
     const data = getLocalData();
     const cleanRollNo = String(registrationData.rollNo || '').trim().toLowerCase();
     const cleanName = String(registrationData.name || '').trim().toLowerCase();
@@ -496,7 +864,6 @@ export const api = {
       registeredAt: new Date().toISOString()
     };
 
-    // If destination is reserve pool (and not full)
     if (isReserveDestination) {
       newPlayer.teamId = 'reserve';
       if (!data.reservePool) data.reservePool = [];
@@ -515,8 +882,6 @@ export const api = {
 
     if (!team.players) team.players = [];
 
-    // If student selected "Not Sure", place as EXTRA directly in the team
-    // Enforce 13-player team squad limit
     if (team.players.length >= 13) {
       throw new Error(`${team.name} has already reached its maximum squad limit of 13 players. Please select another team.`);
     }
@@ -537,7 +902,22 @@ export const api = {
 
   // Admin login check
   async adminLogin(pin) {
-    if (!isStaticHosting()) {
+    const config = getActiveCloudConfig();
+    if (config.isConfigured && config.type === 'custom_api') {
+      try {
+        const endpoint = `${normalizeCustomApiUrl(config.url)}/admin/login`;
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin })
+        });
+        if (res.ok) return true;
+      } catch (e) {
+        // offline fallback
+      }
+    }
+
+    if (!isStaticHosting() && !config.isConfigured) {
       try {
         const res = await fetch('/api/admin/login', {
           method: 'POST',
@@ -549,31 +929,113 @@ export const api = {
         // offline fallback
       }
     }
+
+    // Default: Check pin against local data
     const data = getLocalData();
-    const validPin = data.tournament?.organizerPin || 'NEXTIAS2026';
+    const validPin = data.tournament?.organizerPin || 'NEXTIAS2610';
     return pin === validPin;
   },
 
-  // Admin fetch full data (including confidential student contacts)
+  // Admin fetch full data
   async getAdminData(pin) {
-    if (!isStaticHosting()) {
+    const config = getActiveCloudConfig();
+
+    if (config.isConfigured && config.type === 'firebase') {
       try {
-        const res = await fetch('/api/admin/all-data', {
+        const raw = await fetchFirebaseRaw();
+        if (raw) return raw;
+      } catch (e) {
+        console.warn('Firebase admin data fetch failed, using local cache:', e);
+      }
+    }
+
+    if (config.isConfigured && config.type === 'custom_api') {
+      try {
+        const endpoint = `${normalizeCustomApiUrl(config.url)}/admin/all-data`;
+        const res = await fetch(endpoint, {
           headers: { 'x-organizer-pin': pin }
         });
-        if (res.ok) {
-          return await res.json();
-        }
+        if (res.ok) return await res.json();
       } catch (e) {
         // fallback
       }
     }
+
+    if (!isStaticHosting() && !config.isConfigured) {
+      try {
+        const res = await fetch('/api/admin/all-data', {
+          headers: { 'x-organizer-pin': pin }
+        });
+        if (res.ok) return await res.json();
+      } catch (e) {
+        // fallback
+      }
+    }
+
     return getLocalData();
   },
 
   // Admin update player (reassign team, role, attendance)
   async updatePlayer(pin, updatePayload) {
-    if (!isStaticHosting()) {
+    const config = getActiveCloudConfig();
+
+    if (config.isConfigured && config.type === 'firebase') {
+      let data = await fetchFirebaseRaw();
+      if (!data) data = getLocalData();
+
+      let player = null;
+      for (const t of data.teams) {
+        const idx = (t.players || []).findIndex(p => p.id === updatePayload.playerId);
+        if (idx !== -1) {
+          player = t.players.splice(idx, 1)[0];
+          break;
+        }
+      }
+      if (!player) {
+        const idx = (data.reservePool || []).findIndex(p => p.id === updatePayload.playerId);
+        if (idx !== -1) {
+          player = data.reservePool.splice(idx, 1)[0];
+        }
+      }
+
+      if (player) {
+        if (updatePayload.attendance) player.attendance = updatePayload.attendance;
+        if (updatePayload.role) player.role = updatePayload.role;
+        if (typeof updatePayload.isWicketKeeper === 'boolean') player.isWicketKeeper = updatePayload.isWicketKeeper;
+
+        if (updatePayload.targetTeamId === 'reserve') {
+          player.teamId = 'reserve';
+          if (!data.reservePool) data.reservePool = [];
+          data.reservePool.push(player);
+        } else {
+          const team = data.teams.find(t => t.id === updatePayload.targetTeamId);
+          if (team) {
+            player.teamId = team.id;
+            if (!team.players) team.players = [];
+            team.players.push(player);
+          }
+        }
+        await saveFirebaseRaw(data);
+        return { success: true, player };
+      }
+      throw new Error('Player not found');
+    }
+
+    if (config.isConfigured && config.type === 'custom_api') {
+      const endpoint = `${normalizeCustomApiUrl(config.url)}/admin/update-player`;
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-organizer-pin': pin
+        },
+        body: JSON.stringify(updatePayload)
+      });
+      if (res.ok) return await res.json();
+      throw new Error('Failed to update player via custom API');
+    }
+
+    if (!isStaticHosting() && !config.isConfigured) {
       try {
         const res = await fetch('/api/admin/update-player', {
           method: 'POST',
@@ -589,6 +1051,7 @@ export const api = {
       }
     }
 
+    // Local storage fallback
     const data = getLocalData();
     let player = null;
     for (const t of data.teams) {
@@ -629,7 +1092,51 @@ export const api = {
 
   // Update match fixture (status, score, winner) and auto-advance
   async updateMatch(pin, matchPayload) {
-    if (!isStaticHosting()) {
+    const config = getActiveCloudConfig();
+
+    if (config.isConfigured && config.type === 'firebase') {
+      let data = await fetchFirebaseRaw();
+      if (!data) data = getLocalData();
+
+      data.fixtures = data.fixtures || INITIAL_FALLBACK_DATA.fixtures;
+      const match = data.fixtures.find(m => m.id === matchPayload.matchId);
+      if (!match) throw new Error('Match fixture not found');
+
+      if (matchPayload.status) match.status = matchPayload.status;
+      if (matchPayload.scores) match.scores = { ...match.scores, ...matchPayload.scores };
+      if (matchPayload.summary !== undefined) match.summary = matchPayload.summary;
+
+      if (matchPayload.winnerTeamId !== undefined) {
+        if (matchPayload.winnerTeamId) {
+          match.winnerTeamId = matchPayload.winnerTeamId;
+          const team = (data.teams || []).find(t => t.id === matchPayload.winnerTeamId);
+          match.winnerTeamName = team ? team.name : (matchPayload.winnerTeamId === match.team1Id ? match.team1Name : match.team2Name);
+          match.status = 'Completed';
+        } else {
+          match.winnerTeamId = null;
+          match.winnerTeamName = null;
+        }
+      }
+
+      data.fixtures = advanceKnockoutFixtures(data.fixtures, data.teams || []);
+      await saveFirebaseRaw(data);
+      return { success: true, fixtures: data.fixtures };
+    }
+
+    if (config.isConfigured && config.type === 'custom_api') {
+      const endpoint = `${normalizeCustomApiUrl(config.url)}/admin/update-match`;
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-organizer-pin': pin
+        },
+        body: JSON.stringify(matchPayload)
+      });
+      if (res.ok) return await res.json();
+    }
+
+    if (!isStaticHosting() && !config.isConfigured) {
       try {
         const res = await fetch('/api/admin/update-match', {
           method: 'POST',
@@ -673,6 +1180,16 @@ export const api = {
 
   // Reset fixtures back to initial tournament schedule
   async resetFixtures(pin) {
+    const config = getActiveCloudConfig();
+
+    if (config.isConfigured && config.type === 'firebase') {
+      let data = await fetchFirebaseRaw();
+      if (!data) data = getLocalData();
+      data.fixtures = JSON.parse(JSON.stringify(INITIAL_FALLBACK_DATA.fixtures));
+      await saveFirebaseRaw(data);
+      return { success: true, fixtures: data.fixtures };
+    }
+
     const data = getLocalData();
     data.fixtures = JSON.parse(JSON.stringify(INITIAL_FALLBACK_DATA.fixtures));
     saveLocalData(data);

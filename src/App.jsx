@@ -8,11 +8,12 @@ import ReservePoolSection from './components/ReservePoolSection';
 import TelegramNotice from './components/TelegramNotice';
 import RulesSection from './components/RulesSection';
 import FixturesSection from './components/FixturesSection';
-import { api } from './services/api';
-import { Search, Trophy, Shield, Users, CheckCircle, RefreshCw, AlertCircle, Sparkles, Flame } from 'lucide-react';
+import { api, getActiveCloudConfig } from './services/api';
+import { Search, Trophy, Shield, Users, CheckCircle, RefreshCw, AlertCircle, Sparkles, Flame, Globe } from 'lucide-react';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
+  const [cloudSyncStatus, setCloudSyncStatus] = useState(() => getActiveCloudConfig());
   const [data, setData] = useState({
     tournament: {},
     teams: [],
@@ -47,20 +48,47 @@ export default function App() {
   const [studentSearchQuery, setStudentSearchQuery] = useState('');
   const [searchResult, setSearchResult] = useState(null);
 
-  const fetchData = async () => {
+  const fetchData = async (showLoading = false) => {
     try {
-      setLoading(true);
+      if (showLoading) setLoading(true);
       const publicData = await api.getPublicData();
       setData(publicData);
+      setCloudSyncStatus(getActiveCloudConfig());
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
+    fetchData(true);
+
+    // Auto-polling every 8 seconds so all devices see registrations in real time
+    const interval = setInterval(() => {
+      fetchData(false);
+    }, 8000);
+
+    // Re-fetch immediately when user switches back to the tab or phone screen unlocks
+    const handleVisibility = () => {
+      if (!document.hidden) {
+        fetchData(false);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    // Re-fetch whenever cloud database config is updated in Organizer Command Center
+    const handleConfigChange = () => {
+      setCloudSyncStatus(getActiveCloudConfig());
+      fetchData(true);
+    };
+    window.addEventListener('next_ias_cloud_config_updated', handleConfigChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('next_ias_cloud_config_updated', handleConfigChange);
+    };
   }, []);
 
   const handleOpenRegisterForTeam = (teamId) => {
@@ -80,7 +108,7 @@ export default function App() {
 
   const handleRegistrationSubmit = async (regData) => {
     const res = await api.register(regData);
-    await fetchData();
+    await fetchData(false);
     return res;
   };
 
@@ -130,8 +158,40 @@ export default function App() {
       <StatsBanner tournament={data.tournament} />
 
       {/* 3. Main Navigation & Search Bar */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         
+        {/* Global Multi-Device Sync Status Banner */}
+        <div className={`flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 rounded-2xl border text-xs shadow-sm transition ${
+          cloudSyncStatus.isConfigured
+            ? 'bg-emerald-50/90 border-emerald-200 text-emerald-950'
+            : 'bg-amber-50/90 border-amber-200 text-amber-950'
+        }`}>
+          <div className="flex items-center gap-2">
+            {cloudSyncStatus.isConfigured ? (
+              <>
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></span>
+                <span className="font-black text-emerald-800">🟢 Global Real-Time Cloud Sync Active</span>
+                <span className="text-slate-300 hidden md:inline">•</span>
+                <span className="text-slate-600 hidden md:inline">Form submissions and roster updates synchronize automatically across all devices</span>
+              </>
+            ) : (
+              <>
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-500 flex-shrink-0"></span>
+                <span className="font-black text-amber-900">🟡 Local Device Storage Mode</span>
+                <span className="text-slate-300 hidden md:inline">•</span>
+                <span className="text-slate-600 hidden md:inline">Connect Firebase or Backend in Organizer Command Center to enable global multi-device sync</span>
+              </>
+            )}
+          </div>
+
+          <button
+            onClick={() => setIsAdminOpen(true)}
+            className="text-[11px] font-bold text-brand-navy hover:underline flex items-center gap-1 ml-auto"
+          >
+            {cloudSyncStatus.isConfigured ? 'View Cloud DB Config' : '⚙️ Setup Cloud Sync'}
+          </button>
+        </div>
+
         {/* Navigation Tabs & Student Search */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
           
@@ -145,7 +205,7 @@ export default function App() {
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
-              🏏 8 Teams & Rosters ({data.teams.length})
+              🏏 8 Teams &amp; Rosters ({data.teams.length})
             </button>
 
             <button
@@ -156,8 +216,8 @@ export default function App() {
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
-              <span>🏆 Fixtures & Results ({data.fixtures?.length || 7})</span>
-              {(data.fixtures || []).some(m => m.status === 'Ongoing') && (
+              <span>🏆 Fixtures &amp; Results ({data.fixtures?.length || 7})</span>
+              {(data.fixtures || []).some(m => m.status === 'Live') && (
                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
               )}
             </button>
@@ -181,7 +241,7 @@ export default function App() {
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
-              📢 Telegram & Privacy
+              📢 Telegram Channel
             </button>
 
             <button
@@ -192,49 +252,47 @@ export default function App() {
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
-              📋 Rules & Squad Structure
+              📜 Tournament Rules (T10)
             </button>
           </div>
 
-          {/* Quick Player Lookup Search */}
+          {/* Quick Player Lookup */}
           <div className="relative w-full md:w-72">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
             <input
               type="text"
-              placeholder="Find my team (search name)..."
+              placeholder="Find registered player or roll no..."
               value={studentSearchQuery}
               onChange={handleStudentSearch}
-              className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-red focus:border-transparent outline-none bg-slate-50"
+              className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-red outline-none bg-slate-50 focus:bg-white transition"
             />
           </div>
-
         </div>
 
-        {/* Live Search Results Popup / Alert */}
-        {studentSearchQuery && (
-          <div className="bg-white rounded-2xl p-4 border border-brand-red/30 shadow-md">
-            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center justify-between">
-              <span>Search Results for "{studentSearchQuery}"</span>
-              <button onClick={() => { setStudentSearchQuery(''); setSearchResult(null); }} className="text-slate-400 hover:text-slate-600 text-xs">Clear</button>
+        {/* Search Results Dropdown Overlay */}
+        {searchResult && (
+          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-lg animate-in fade-in space-y-2">
+            <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+              <span>Matching Registered Candidates ({searchResult.length})</span>
+              <button onClick={() => setSearchResult(null)} className="text-rose-600 hover:underline text-[11px]">Close</button>
             </div>
-            {(!searchResult || searchResult.length === 0) ? (
-              <p className="text-xs text-slate-400 italic">No registered participant found with that name or roll number. Click "Register Now" to sign up!</p>
+            {searchResult.length === 0 ? (
+              <p className="text-xs text-slate-500 py-2">No player found with that name or roll number. They can register now!</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {searchResult.map((res, i) => (
-                  <div key={i} className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 pt-1">
+                {searchResult.map((p, idx) => (
+                  <div key={idx} className="p-2.5 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-between text-xs">
                     <div>
                       <div className="font-bold text-slate-900 flex items-center gap-1">
-                        <span>{res.name}</span>
-                        {res.isWicketKeeper && <span>🧤</span>}
+                        <span>{p.name}</span>
+                        {p.isCaptain && <span className="text-[9px] bg-amber-100 text-amber-800 px-1 rounded font-bold">C</span>}
+                        {p.isExtra && <span className="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1 rounded font-bold">EXTRA</span>}
                       </div>
-                      <div className="text-[11px] text-slate-500">{res.rollNo} • {res.role}</div>
+                      <div className="text-[10px] text-slate-500">{p.rollNo} • {p.role}</div>
                     </div>
-                    <div className="text-right">
-                      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-navy text-white">
-                        {res.teamName}
-                      </span>
-                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-brand-navy/10 text-brand-navy truncate max-w-[110px]">
+                      {p.teamName}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -242,60 +300,76 @@ export default function App() {
           </div>
         )}
 
-        {/* Dynamic Tab Views */}
+        {/* Tab 1: Teams Section */}
         {activeTab === 'teams' && (
-          <div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h2 className="text-2xl font-black font-heading text-slate-900 tracking-tight">
-                  8 Official Teams & Squad Slots
+                <h2 className="text-2xl font-black font-heading text-slate-900 flex items-center gap-2">
+                  <span>Official Tournament Teams</span>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">
+                    8 Teams
+                  </span>
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-500">
-                  Click on any team card to inspect current squad members, slot balances, or join that team.
+                <p className="text-xs text-slate-500 mt-0.5">
+                  13-player flexible squad capacity per team. Live breakdown of Batsmen, All-Rounders, and Bowlers.
                 </p>
               </div>
 
               <button
-                onClick={fetchData}
-                disabled={loading}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-white text-slate-600 text-xs font-semibold shadow-sm transition"
+                onClick={handleOpenGeneralRegister}
+                className="px-5 py-2.5 rounded-xl bg-brand-red hover:bg-brand-red-dark text-white text-xs font-bold transition shadow-sm flex items-center justify-center gap-2"
               >
-                <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-                <span>Sync Slots</span>
+                <Sparkles className="w-4 h-4" />
+                <span>Register for Tournament</span>
               </button>
             </div>
 
-            {/* 8 Teams Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-              {data.teams.map((team) => (
-                <TeamCard
-                  key={team.id}
-                  team={team}
-                  onSelectTeam={handleOpenRegisterForTeam}
-                />
-              ))}
-            </div>
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                  <div key={i} className="h-80 bg-slate-200 rounded-3xl" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {data.teams.map(team => (
+                  <TeamCard
+                    key={team.id}
+                    team={team}
+                    onJoin={() => handleOpenRegisterForTeam(team.id)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 
+        {/* Tab 2: Knockout Fixtures Section */}
         {activeTab === 'fixtures' && (
           <FixturesSection
             fixtures={data.fixtures || []}
             teams={data.teams || []}
+            onOpenAdmin={() => setIsAdminOpen(true)}
           />
         )}
 
+        {/* Tab 3: Central Reserve Pool Section */}
         {activeTab === 'reserve' && (
           <ReservePoolSection
-            reservePool={data.reservePool}
+            reservePool={data.reservePool || []}
             onJoinReserve={handleJoinReserve}
           />
         )}
 
+        {/* Tab 4: Telegram Channel Section */}
         {activeTab === 'telegram' && (
-          <TelegramNotice telegramUrl={data.tournament.telegramGroupUrl} />
+          <TelegramNotice
+            telegramUrl={data.tournament?.telegramGroupUrl || 'https://t.me/+MgD-vhGBGSgzOWI9'}
+          />
         )}
 
+        {/* Tab 5: Rules Section */}
         {activeTab === 'rules' && (
           <RulesSection />
         )}
@@ -303,18 +377,18 @@ export default function App() {
       </main>
 
       {/* 4. Footer */}
-      <footer className="bg-white border-t border-slate-200 mt-16 py-8 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-2">
-          <div className="flex items-center justify-center gap-2">
-            <span className="font-extrabold text-brand-navy font-heading">NEXT <span className="text-brand-red">IAS</span></span>
+      <footer className="bg-slate-900 text-white border-t border-slate-800 py-8 px-4 text-center mt-auto">
+        <div className="max-w-7xl mx-auto space-y-2">
+          <div className="flex items-center justify-center gap-2 text-xs font-heading">
+            <span className="font-extrabold text-brand-gold">NEXT IAS</span>
             <span>•</span>
-            <span className="font-bold text-sky-800">Umang 2026: Sports &amp; Inspiration Meet</span>
+            <span className="font-bold text-sky-400">Umang 2026: Sports &amp; Inspiration Meet</span>
           </div>
           <p className="text-[11px] text-slate-400">
             Official Cricket Championship 2026 • 8 Teams • 13 Players Per Team (104 Squad Slots + Central Reserve Pool)
           </p>
           <div className="pt-2 text-[10px] text-slate-400">
-            Confidentiality Notice: Personal contact details are encrypted and accessible only by designated tournament organizers.
+            Confidentiality Notice: Personal contact details are protected and accessible only by authorized tournament organizers.
           </div>
         </div>
       </footer>
