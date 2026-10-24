@@ -82,6 +82,7 @@ app.get('/api/public-data', (req, res) => {
         battingStyle: p.battingStyle || 'Right Hand',
         bowlingStyle: p.bowlingStyle || 'None',
         isCaptain: !!p.isCaptain,
+        isViceCaptain: !!p.isViceCaptain,
         attendance: p.attendance || 'Pending',
         teamId: p.teamId,
         registeredAt: p.registeredAt

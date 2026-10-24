@@ -288,6 +288,7 @@ export default function App() {
                       <div className="font-bold text-slate-900 flex items-center gap-1">
                         <span>{p.name}</span>
                         {p.isCaptain && <span className="text-[9px] bg-amber-100 text-amber-800 px-1 rounded font-bold">C</span>}
+                        {p.isViceCaptain && <span className="text-[9px] bg-sky-100 text-sky-800 border border-sky-300 px-1 rounded font-bold" title="Vice Captain">VC</span>}
                         {p.isExtra && <span className="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1 rounded font-bold">EXTRA</span>}
                       </div>
                       <div className="text-[10px] text-slate-500">{p.rollNo} • {p.role}</div>

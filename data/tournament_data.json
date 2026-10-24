@@ -60,15 +60,15 @@
     {
       "id": "cap-7",
       "name": "Siddharth",
-      "role": "Team Captain",
-      "teamId": "team-7",
+      "role": "Team Vice-Captain",
+      "teamId": "team-5",
       "mobile": "7717706744"
     },
     {
       "id": "cap-8",
       "name": "Vansh",
-      "role": "Team Captain",
-      "teamId": "team-8",
+      "role": "Team Vice-Captain",
+      "teamId": "team-4",
       "mobile": "7828035527"
     },
     {
@@ -188,6 +188,22 @@
           "attendance": "Confirmed",
           "teamId": "team-4",
           "registeredAt": "2026-10-23T14:00:00.000Z"
+        },
+        {
+          "id": "p-cap-8",
+          "name": "Vansh",
+          "rollNo": "CAPT-08",
+          "role": "bowlingAllRounder",
+          "isWicketKeeper": false,
+          "battingStyle": "Left Hand",
+          "bowlingStyle": "Right-arm Fast Medium",
+          "mobile": "7828035527",
+          "whatsapp": "7828035527",
+          "isCaptain": false,
+          "isViceCaptain": true,
+          "attendance": "Confirmed",
+          "teamId": "team-4",
+          "registeredAt": "2026-10-23T14:00:00.000Z"
         }
       ]
     },
@@ -211,6 +227,22 @@
           "mobile": "8310342290",
           "whatsapp": "8310342290",
           "isCaptain": true,
+          "attendance": "Confirmed",
+          "teamId": "team-5",
+          "registeredAt": "2026-10-23T14:00:00.000Z"
+        },
+        {
+          "id": "p-cap-7",
+          "name": "Siddharth",
+          "rollNo": "CAPT-07",
+          "role": "batsman",
+          "isWicketKeeper": false,
+          "battingStyle": "Right Hand",
+          "bowlingStyle": "None",
+          "mobile": "7717706744",
+          "whatsapp": "7717706744",
+          "isCaptain": false,
+          "isViceCaptain": true,
           "attendance": "Confirmed",
           "teamId": "team-5",
           "registeredAt": "2026-10-23T14:00:00.000Z"
@@ -250,24 +282,8 @@
       "tagline": "Midnight Revisions & Matchwinners",
       "color": "from-rose-600 to-pink-950",
       "accentColor": "#E11D48",
-      "captainName": "Siddharth (Captain)",
-      "players": [
-        {
-          "id": "p-cap-7",
-          "name": "Siddharth",
-          "rollNo": "CAPT-07",
-          "role": "batsman",
-          "isWicketKeeper": false,
-          "battingStyle": "Right Hand",
-          "bowlingStyle": "None",
-          "mobile": "7717706744",
-          "whatsapp": "7717706744",
-          "isCaptain": true,
-          "attendance": "Confirmed",
-          "teamId": "team-7",
-          "registeredAt": "2026-10-23T14:00:00.000Z"
-        }
-      ]
+      "captainName": "TBA (To be announced)",
+      "players": []
     },
     {
       "id": "team-8",
@@ -276,24 +292,8 @@
       "tagline": "Clearing Cut-offs & Clearing Boundaries",
       "color": "from-orange-600 to-amber-900",
       "accentColor": "#EA580C",
-      "captainName": "Vansh (Captain)",
-      "players": [
-        {
-          "id": "p-cap-8",
-          "name": "Vansh",
-          "rollNo": "CAPT-08",
-          "role": "bowlingAllRounder",
-          "isWicketKeeper": false,
-          "battingStyle": "Left Hand",
-          "bowlingStyle": "Right-arm Fast Medium",
-          "mobile": "7828035527",
-          "whatsapp": "7828035527",
-          "isCaptain": true,
-          "attendance": "Confirmed",
-          "teamId": "team-8",
-          "registeredAt": "2026-10-23T14:00:00.000Z"
-        }
-      ]
+      "captainName": "TBA (To be announced)",
+      "players": []
     }
   ],
   "reservePool": [],

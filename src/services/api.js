@@ -28,8 +28,8 @@ export const INITIAL_FALLBACK_DATA = {
     { id: "cap-4", name: "Nikhil", role: "Team Captain", teamId: "team-4", mobile: "6386282800" },
     { id: "cap-5", name: "Ravi", role: "Team Captain", teamId: "team-5", mobile: "8310342290" },
     { id: "cap-6", name: "Satyam", role: "Team Captain", teamId: "team-6", mobile: "9219832109" },
-    { id: "cap-7", name: "Siddharth", role: "Team Captain", teamId: "team-7", mobile: "7717706744" },
-    { id: "cap-8", name: "Vansh", role: "Team Captain", teamId: "team-8", mobile: "7828035527" },
+    { id: "cap-7", name: "Siddharth", role: "Team Vice-Captain", teamId: "team-5", mobile: "7717706744" },
+    { id: "cap-8", name: "Vansh", role: "Team Vice-Captain", teamId: "team-4", mobile: "7828035527" },
     { id: "cap-9", name: "Organizer 1", role: "Tournament Organizer & Director", teamId: null, mobile: "+91 98990 XXXXX" },
     { id: "cap-10", name: "Organizer 2", role: "Tournament Organizer & Operations", teamId: null, mobile: "+91 98001 XXXXX" }
   ],
@@ -79,7 +79,8 @@ export const INITIAL_FALLBACK_DATA = {
       accentColor: "#10B981",
       captainName: "Nikhil (Captain)",
       players: [
-        { id: "p-cap-4", name: "Nikhil", rollNo: "CAPT-04", role: "allRounder", isWicketKeeper: false, battingStyle: "Left Hand", bowlingStyle: "Right-arm Off Spin", mobile: "6386282800", isCaptain: true, attendance: "Confirmed", teamId: "team-4" }
+        { id: "p-cap-4", name: "Nikhil", rollNo: "CAPT-04", role: "allRounder", isWicketKeeper: false, battingStyle: "Left Hand", bowlingStyle: "Right-arm Off Spin", mobile: "6386282800", isCaptain: true, attendance: "Confirmed", teamId: "team-4" },
+        { id: "p-cap-8", name: "Vansh", rollNo: "CAPT-08", role: "bowlingAllRounder", isWicketKeeper: false, battingStyle: "Left Hand", bowlingStyle: "Right-arm Fast Medium", mobile: "7828035527", isCaptain: false, isViceCaptain: true, attendance: "Confirmed", teamId: "team-4" }
       ]
     },
     {
@@ -91,7 +92,8 @@ export const INITIAL_FALLBACK_DATA = {
       accentColor: "#7C3AED",
       captainName: "Ravi (Captain)",
       players: [
-        { id: "p-cap-5", name: "Ravi", rollNo: "CAPT-05", role: "batsman", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "None", mobile: "8310342290", isCaptain: true, attendance: "Confirmed", teamId: "team-5" }
+        { id: "p-cap-5", name: "Ravi", rollNo: "CAPT-05", role: "batsman", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "None", mobile: "8310342290", isCaptain: true, attendance: "Confirmed", teamId: "team-5" },
+        { id: "p-cap-7", name: "Siddharth", rollNo: "CAPT-07", role: "batsman", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "None", mobile: "7717706744", isCaptain: false, isViceCaptain: true, attendance: "Confirmed", teamId: "team-5" }
       ]
     },
     {
@@ -113,10 +115,8 @@ export const INITIAL_FALLBACK_DATA = {
       tagline: "Midnight Revisions & Matchwinners",
       color: "from-rose-600 to-pink-950",
       accentColor: "#E11D48",
-      captainName: "Siddharth (Captain)",
-      players: [
-        { id: "p-cap-7", name: "Siddharth", rollNo: "CAPT-07", role: "batsman", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "None", mobile: "7717706744", isCaptain: true, attendance: "Confirmed", teamId: "team-7" }
-      ]
+      captainName: "TBA (To be announced)",
+      players: []
     },
     {
       id: "team-8",
@@ -125,10 +125,8 @@ export const INITIAL_FALLBACK_DATA = {
       tagline: "Clearing Cut-offs & Clearing Boundaries",
       color: "from-orange-600 to-amber-900",
       accentColor: "#EA580C",
-      captainName: "Vansh (Captain)",
-      players: [
-        { id: "p-cap-8", name: "Vansh", rollNo: "CAPT-08", role: "bowlingAllRounder", isWicketKeeper: false, battingStyle: "Left Hand", bowlingStyle: "Right-arm Fast Medium", mobile: "7828035527", isCaptain: true, attendance: "Confirmed", teamId: "team-8" }
-      ]
+      captainName: "TBA (To be announced)",
+      players: []
     }
   ],
   reservePool: [],
@@ -531,6 +529,7 @@ function formatSanitizedData(data) {
       battingStyle: p.battingStyle || 'Right Hand',
       bowlingStyle: p.bowlingStyle || 'None',
       isCaptain: !!p.isCaptain,
+      isViceCaptain: !!p.isViceCaptain,
       attendance: p.attendance || 'Pending',
       isExtra: !!p.isExtra,
       teamId: p.teamId,

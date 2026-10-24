@@ -64,6 +64,11 @@ export default function TeamCard({ team, onSelectTeam, onJoin }) {
                 (C)
               </span>
             )}
+            {player.isViceCaptain && (
+              <span className="text-[9px] bg-sky-100 text-sky-900 border border-sky-300 font-extrabold px-1 rounded flex-shrink-0" title="Vice Captain">
+                (VC)
+              </span>
+            )}
             {(player.isExtra || player.attendance === 'Not Sure') && (
               <span className="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 font-extrabold px-1.5 rounded flex-shrink-0" title="Marked Not Sure (Extra / Bench)">
                 EXTRA
@@ -132,7 +137,12 @@ export default function TeamCard({ team, onSelectTeam, onJoin }) {
         <div className="mt-3 pt-2.5 border-t border-white/20 flex items-center justify-between text-[11px]">
           <div className="flex items-center gap-1 text-white/95 truncate">
             <Shield className="w-3.5 h-3.5 text-amber-300 fill-amber-300 flex-shrink-0" />
-            <span className="truncate">Captain: <strong>{team.captainName}</strong></span>
+            <span className="truncate">
+              Captain: <strong>{team.captainName || 'TBA'}</strong>
+              {players.some(p => p.isViceCaptain) && (
+                <span className="opacity-95 font-medium"> • VC: <strong>{players.find(p => p.isViceCaptain).name}</strong></span>
+              )}
+            </span>
           </div>
           {wicketKeepers.length > 0 && (
             <span className="bg-amber-400/25 text-amber-200 border border-amber-300/30 px-1.5 py-0.2 rounded text-[10px] font-bold flex-shrink-0">

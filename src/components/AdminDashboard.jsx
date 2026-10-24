@@ -663,6 +663,11 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
                                       Captain
                                     </span>
                                   )}
+                                  {player.isViceCaptain && (
+                                    <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 border border-sky-300 text-[9px] font-black uppercase">
+                                      Vice Captain
+                                    </span>
+                                  )}
                                   {player.isExtra && (
                                     <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 text-[9px] font-extrabold uppercase">
                                       EXTRA
@@ -738,7 +743,7 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
                                 <select
                                   value={player.currentTeamId}
                                   onChange={(e) => handleTransferPlayer(player.id, e.target.value)}
-                                  disabled={player.isCaptain}
+                                  disabled={player.isCaptain || player.isViceCaptain}
                                   className="px-2 py-1 rounded-lg border border-slate-300 bg-white text-slate-700 text-xs font-semibold outline-none disabled:opacity-50"
                                 >
                                   <option disabled value="">Move Squad...</option>
