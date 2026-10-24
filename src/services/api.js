@@ -17,8 +17,8 @@ export const INITIAL_FALLBACK_DATA = {
     venue: "NEXT IAS Sports Complex (Pitches 1, 2, 3, 4), New Delhi",
     organizerPin: "NEXTIAS2610",
     telegramGroupUrl: "https://t.me/+MgD-vhGBGSgzOWI9",
-    totalExpectedPlayers: 108,
-    rosterSlotsPerTeam: 13,
+    totalExpectedPlayers: 84,
+    rosterSlotsPerTeam: 10,
     reservePoolCapacity: 4
   },
   captains: [
@@ -507,13 +507,13 @@ function computeTeamStats(team) {
   const total = players.length;
 
   return {
-    maxSlots: { total: 13 },
+    maxSlots: { total: 10 },
     counts: { batsmen, allRounders, bowlers, wicketKeepers: wicketKeepersCount, total },
     occupied: { batsmen, allRounders, bowlers, total },
     available: {
-      total: Math.max(0, 13 - total)
+      total: Math.max(0, 10 - total)
     },
-    isFull: total >= 13,
+    isFull: total >= 10,
     wicketKeepersCount
   };
 }
@@ -559,7 +559,7 @@ function formatSanitizedData(data) {
       totalAssignedPlayers,
       totalReserve: sanitizedReserve.length,
       totalRegistered: totalAssignedPlayers + sanitizedReserve.length,
-      totalSlotsAcrossTeams: 104
+      totalSlotsAcrossTeams: 80
     },
     teams: sanitizedTeams,
     reservePool: sanitizedReserve,
@@ -796,9 +796,9 @@ export const api = {
 
       if (!team.players) team.players = [];
 
-      // Enforce 13-player team squad limit
-      if (team.players.length >= 13) {
-        throw new Error(`${team.name} has already reached its maximum squad limit of 13 players. Please choose another team.`);
+      // Enforce 10-player team squad limit
+      if (team.players.length >= 10) {
+        throw new Error(`${team.name} has already reached its maximum squad limit of 10 players. Please choose another team.`);
       }
 
       newPlayer.teamId = team.id;
@@ -903,8 +903,8 @@ export const api = {
 
     if (!team.players) team.players = [];
 
-    if (team.players.length >= 13) {
-      throw new Error(`${team.name} has already reached its maximum squad limit of 13 players. Please select another team.`);
+    if (team.players.length >= 10) {
+      throw new Error(`${team.name} has already reached its maximum squad limit of 10 players. Please select another team.`);
     }
 
     newPlayer.teamId = team.id;

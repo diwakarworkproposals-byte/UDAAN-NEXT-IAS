@@ -22,14 +22,14 @@ export default function RulesSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           
-          {/* Rule 1: Flexible 13-Player Squad */}
+          {/* Rule 1: Flexible 10-Player Squad */}
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
             <div className="w-8 h-8 rounded-lg bg-red-100 text-brand-red font-bold text-xs flex items-center justify-center mb-3">
               1
             </div>
-            <h4 className="font-bold text-slate-900 text-sm mb-1.5">13-Player Squad Limit</h4>
+            <h4 className="font-bold text-slate-900 text-sm mb-1.5">10-Player Squad Limit</h4>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Every team has a strict limit of <strong>13 players total</strong>. No rigid role slot quotas — teams dynamically record live counts of <strong>Batsmen, All-Rounders, and Bowlers</strong> as students join. Total capacity: 104 slots across 8 teams.
+              Every team has a strict limit of <strong>10 players total</strong>. No rigid role slot quotas — teams dynamically record live counts of <strong>Batsmen, All-Rounders, and Bowlers</strong> as students join. Total capacity: 80 slots across 8 teams.
             </p>
           </div>
 

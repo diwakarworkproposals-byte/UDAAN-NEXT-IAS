@@ -63,8 +63,8 @@ export default function RegistrationModal({
   const selectedTeam = teams.find(t => t.id === formData.preferredTeamId);
   const stats = selectedTeam ? selectedTeam.stats : null;
 
-  // Check if selected team is full (13 players max)
-  const isSelectedTeamFull = selectedTeam ? ((selectedTeam.players || []).length >= 13) : false;
+  // Check if selected team is full (10 players max)
+  const isSelectedTeamFull = selectedTeam ? ((selectedTeam.players || []).length >= 10) : false;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -439,14 +439,14 @@ export default function RegistrationModal({
               >
                 {teams.map((t) => {
                   const pCount = (t.players || []).length;
-                  const isFull = pCount >= 13;
+                  const isFull = pCount >= 10;
                   const batsmenCount = (t.players || []).filter(p => p.role === 'batsman').length;
                   const allRoundersCount = (t.players || []).filter(p => p.role === 'allRounder' || p.role === 'battingAllRounder' || p.role === 'bowlingAllRounder').length;
                   const bowlersCount = (t.players || []).filter(p => p.role === 'bowler').length;
 
                   return (
                     <option key={t.id} value={t.id} disabled={isFull}>
-                      {t.name} • {pCount}/13 Players ({isFull ? 'SQUAD FULL' : `${13 - pCount} open`} | 🏏{batsmenCount}B, ⚡{allRoundersCount}AR, 🎯{bowlersCount}BW)
+                      {t.name} • {pCount}/10 Players ({isFull ? 'SQUAD FULL' : `${10 - pCount} open`} | 🏏{batsmenCount}B, ⚡{allRoundersCount}AR, 🎯{bowlersCount}BW)
                     </option>
                   );
                 })}
@@ -460,8 +460,8 @@ export default function RegistrationModal({
                 <div className="mt-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200">
                   <div className="flex items-center justify-between text-xs font-bold text-slate-800 mb-2">
                     <span>{selectedTeam.name} Current Squad:</span>
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${(selectedTeam.players?.length || 0) >= 13 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800'}`}>
-                      {(selectedTeam.players?.length || 0) >= 13 ? 'Squad Full (13/13)' : `${(selectedTeam.players?.length || 0)}/13 Players (${13 - (selectedTeam.players?.length || 0)} Open)`}
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${(selectedTeam.players?.length || 0) >= 10 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800'}`}>
+                      {(selectedTeam.players?.length || 0) >= 10 ? 'Squad Full (10/10)' : `${(selectedTeam.players?.length || 0)}/10 Players (${10 - (selectedTeam.players?.length || 0)} Open)`}
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
@@ -485,7 +485,7 @@ export default function RegistrationModal({
                     </div>
                   </div>
                   <p className="text-[10px] text-slate-500 mt-2 text-center">
-                    ✨ Flexible squad: Choose any role you prefer. The only limit is 13 total players per team!
+                    ✨ Flexible squad: Choose any role you prefer. The only limit is 10 total players per team!
                   </p>
                 </div>
               )}
@@ -494,7 +494,7 @@ export default function RegistrationModal({
               {isSelectedTeamFull && formData.preferredTeamId !== 'reserve' && (
                 <div className="mt-2 p-2.5 rounded-xl bg-rose-50 border border-rose-300 text-rose-900 text-xs flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0" />
-                  <span>This team has reached its 13-player squad limit. Please choose another team or register as an Extra.</span>
+                  <span>This team has reached its 10-player squad limit. Please choose another team or register as an Extra.</span>
                 </div>
               )}
             </div>

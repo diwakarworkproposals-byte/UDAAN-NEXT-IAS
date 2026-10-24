@@ -17,11 +17,11 @@ export default function TeamCard({ team, onSelectTeam, onJoin }) {
   const wicketKeepers = players.filter(p => p.isWicketKeeper);
 
   const totalOccupied = players.length;
-  const isFull = totalOccupied >= 13;
-  const totalOpen = Math.max(0, 13 - totalOccupied);
+  const isFull = totalOccupied >= 10;
+  const totalOpen = Math.max(0, 10 - totalOccupied);
 
-  // 13 Fixed Squad Slots for the team
-  const squadSlots = Array.from({ length: 13 }, (_, i) => players[i] || null);
+  // 10 Fixed Squad Slots for the team
+  const squadSlots = Array.from({ length: 10 }, (_, i) => players[i] || null);
 
   const getRoleBadge = (role) => {
     switch (role) {
@@ -120,7 +120,7 @@ export default function TeamCard({ team, onSelectTeam, onJoin }) {
 
           <div className="text-right flex-shrink-0">
             <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-black bg-white text-slate-900 shadow-xs">
-              {totalOccupied}/13
+              {totalOccupied}/10
             </span>
             <div className="text-[10px] text-white/90 font-semibold mt-0.5">
               {isFull ? '🔴 Squad Full' : `🟢 ${totalOpen} Open`}
@@ -157,15 +157,15 @@ export default function TeamCard({ team, onSelectTeam, onJoin }) {
         </div>
       </div>
 
-      {/* 3. 13-Player Squad Roster List */}
+      {/* 3. 10-Player Squad Roster List */}
       <div className="p-3.5 flex-1 bg-slate-50/40">
         <div className="flex items-center justify-between mb-2 px-0.5">
           <span className="text-[11px] font-extrabold text-slate-700 tracking-tight flex items-center gap-1">
             <span>📋</span>
-            <span>OFFICIAL SQUAD ROSTER (13 Max)</span>
+            <span>OFFICIAL SQUAD ROSTER (10 Max)</span>
           </span>
           <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
-            {totalOccupied}/13 Filled
+            {totalOccupied}/10 Filled
           </span>
         </div>
         <div className="space-y-1">
@@ -180,7 +180,7 @@ export default function TeamCard({ team, onSelectTeam, onJoin }) {
             disabled
             className="w-full py-2 px-3 rounded-xl bg-slate-100 text-slate-400 text-xs font-bold cursor-not-allowed text-center border border-slate-200"
           >
-            Squad Full (13/13)
+            Squad Full (10/10)
           </button>
         ) : (
           <button

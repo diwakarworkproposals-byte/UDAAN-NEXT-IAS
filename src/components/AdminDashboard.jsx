@@ -757,7 +757,7 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
 
                   <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500 font-medium">
                     <span>Showing {filteredPlayers.length} of {allPlayers.length} total participants</span>
-                    <span>13-Player Squad Limit per team • 4 Central Reserve Pool Max</span>
+                    <span>10-Player Squad Limit per team • 4 Central Reserve Pool Max</span>
                   </div>
                 </div>
               </>

@@ -46,13 +46,13 @@ function getTeamStats(team) {
   const totalCount = players.length;
 
   return {
-    maxSlots: { total: 13 },
+    maxSlots: { total: 10 },
     counts: { batsmen: batsmenCount, allRounders: allRoundersCount, bowlers: bowlersCount, wicketKeepers: wicketKeepersCount, total: totalCount },
     occupied: { batsmen: batsmenCount, allRounders: allRoundersCount, bowlers: bowlersCount, total: totalCount },
     available: {
-      total: Math.max(0, 13 - totalCount)
+      total: Math.max(0, 10 - totalCount)
     },
-    isFull: totalCount >= 13,
+    isFull: totalCount >= 10,
     wicketKeepersCount
   };
 }
@@ -110,12 +110,12 @@ app.get('/api/public-data', (req, res) => {
       edition: data.tournament.edition,
       venue: data.tournament.venue,
       telegramGroupUrl: data.tournament.telegramGroupUrl,
-      totalExpectedPlayers: data.tournament.totalExpectedPlayers || 108,
+      totalExpectedPlayers: data.tournament.totalExpectedPlayers || 84,
       totalAssignedPlayers,
       totalReserve,
       totalRegistered: totalAssignedPlayers + totalReserve,
-      rosterSlotsPerTeam: 13,
-      totalSlotsAcrossTeams: 104,
+      rosterSlotsPerTeam: 10,
+      totalSlotsAcrossTeams: 80,
       reserveCapacity: data.tournament.reservePoolCapacity || 12
     },
     teams: sanitizedTeams,
@@ -217,10 +217,10 @@ app.post('/api/register', (req, res) => {
   if (!targetTeam.players) targetTeam.players = [];
 
   // If student selected "Not Sure", place as EXTRA directly in the team
-  // Enforce 13-player team limit
-  if (targetTeam.players.length >= 13) {
+  // Enforce 10-player team limit
+  if (targetTeam.players.length >= 10) {
     return res.status(409).json({
-      error: `${targetTeam.name} has already reached its maximum squad limit of 13 players. Please choose another team.`
+      error: `${targetTeam.name} has already reached its maximum squad limit of 10 players. Please choose another team.`
     });
   }
 

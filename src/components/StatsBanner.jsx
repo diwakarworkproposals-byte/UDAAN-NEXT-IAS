@@ -3,11 +3,11 @@ import { Users, Trophy, ShieldCheck, UserCheck, Flame, Info, Sparkles } from 'lu
 import umangLogo from '../assets/umang-2026-logo.jpg';
 
 export default function StatsBanner({ tournament }) {
-  const totalSlots = tournament.totalSlotsAcrossTeams || 104;
+  const totalSlots = tournament.totalSlotsAcrossTeams || 80;
   const filledSlots = tournament.totalAssignedPlayers !== undefined ? tournament.totalAssignedPlayers : 8;
   const reserveCount = tournament.totalReserve !== undefined ? tournament.totalReserve : 0;
   const totalRegistered = tournament.totalRegistered !== undefined ? tournament.totalRegistered : (filledSlots + reserveCount);
-  const totalTarget = tournament.totalExpectedPlayers || 108;
+  const totalTarget = tournament.totalExpectedPlayers || 84;
 
   const percentFilled = Math.min(100, Math.round((filledSlots / totalSlots) * 100));
 
@@ -51,7 +51,7 @@ export default function StatsBanner({ tournament }) {
           </p>
 
           <p className="mt-3 text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
-            Welcome NEXT IAS aspirants &amp; faculty! Scheduled on <strong className="text-white">25th October 2026 (09:00 AM – 11:00 AM)</strong> • <strong className="text-white">10-Over Fast Matches (T10)</strong> across <strong className="text-white">4 simultaneous pitches</strong>. 8 premier teams with flexible 13-player squads led by 8 student captains and 2 organizers.
+            Welcome NEXT IAS aspirants &amp; faculty! Scheduled on <strong className="text-white">25th October 2026 (09:00 AM – 11:00 AM)</strong> • <strong className="text-white">10-Over Fast Matches (T10)</strong> across <strong className="text-white">4 simultaneous pitches</strong>. 8 premier teams with flexible 10-player squads led by 8 student captains and 2 organizers.
           </p>
 
           {/* Privacy Guarantee Pill */}
@@ -81,7 +81,7 @@ export default function StatsBanner({ tournament }) {
               />
             </div>
             <p className="text-[11px] text-slate-400 mt-2">
-              98 Candidates + 10 Organizers/Captains
+              74 Candidates + 10 Organizers/Captains
             </p>
           </div>
 
@@ -102,7 +102,7 @@ export default function StatsBanner({ tournament }) {
               />
             </div>
             <p className="text-[11px] text-slate-400 mt-2">
-              8 Teams × 13 Players = 104 Slots
+              8 Teams × 10 Players = 80 Slots
             </p>
           </div>
 

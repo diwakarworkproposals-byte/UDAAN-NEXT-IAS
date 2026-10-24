@@ -314,7 +314,7 @@ export default function App() {
                   </span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  13-player flexible squad capacity per team. Live breakdown of Batsmen, All-Rounders, and Bowlers.
+                  10-player flexible squad capacity per team. Live breakdown of Batsmen, All-Rounders, and Bowlers.
                 </p>
               </div>
 
@@ -388,7 +388,7 @@ export default function App() {
             <span className="font-bold text-sky-400">Umang 2026: Sports &amp; Inspiration Meet</span>
           </div>
           <p className="text-[11px] text-slate-400">
-            Official Cricket Championship 2026 • 8 Teams • 13 Players Per Team (104 Squad Slots + Central Reserve Pool)
+            Official Cricket Championship 2026 • 8 Teams • 10 Players Per Team (80 Squad Slots + Central Reserve Pool)
           </p>
           <div className="pt-2 text-[10px] text-slate-400">
             Confidentiality Notice: Personal contact details are protected and accessible only by authorized tournament organizers.
