@@ -29,7 +29,7 @@ export default function Header({ onOpenRegister, onOpenAdmin, onOpenTelegram, te
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 font-semibold tracking-wide uppercase mt-0.5">
-                Sports &amp; Inspiration Meet • 8 Teams • 108 Players
+                Sports &amp; Inspiration Meet • 6 Teams • 8 Overs per Inning (T8)
               </p>
             </div>
           </div>

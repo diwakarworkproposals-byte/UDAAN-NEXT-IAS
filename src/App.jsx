@@ -207,7 +207,7 @@ export default function App() {
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
-              🏏 8 Teams &amp; Rosters ({data.teams.length})
+              🏏 6 Teams &amp; Rosters ({data.teams.length})
             </button>
 
             <button
@@ -218,7 +218,7 @@ export default function App() {
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
-              <span>🏆 Fixtures &amp; Results ({data.fixtures?.length || 7})</span>
+              <span>🏆 Fixtures &amp; Results ({data.fixtures?.length || 5})</span>
               {(data.fixtures || []).some(m => m.status === 'Live') && (
                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
               )}
@@ -254,7 +254,7 @@ export default function App() {
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
-              📜 Tournament Rules (T10)
+              📜 Tournament Rules (T8)
             </button>
           </div>
 
@@ -311,7 +311,7 @@ export default function App() {
                 <h2 className="text-2xl font-black font-heading text-slate-900 flex items-center gap-2">
                   <span>Official Tournament Teams</span>
                   <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">
-                    8 Teams
+                    6 Teams
                   </span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -329,13 +329,13 @@ export default function App() {
             </div>
 
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+                {[1, 2, 3, 4, 5, 6].map(i => (
                   <div key={i} className="h-80 bg-slate-200 rounded-3xl" />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {data.teams.map(team => (
                   <TeamCard
                     key={team.id}
@@ -389,7 +389,7 @@ export default function App() {
             <span className="font-bold text-sky-400">Umang 2026: Sports &amp; Inspiration Meet</span>
           </div>
           <p className="text-[11px] text-slate-400">
-            Official Cricket Championship 2026 • 8 Teams • 10 Players Per Team (80 Squad Slots + Central Reserve Pool)
+            Official Cricket Championship 2026 • 6 Teams • 10 Players Per Team (60 Squad Slots + Central Reserve Pool)
           </p>
           <div className="pt-2 text-[10px] text-slate-400">
             Confidentiality Notice: Personal contact details are protected and accessible only by authorized tournament organizers.

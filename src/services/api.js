@@ -10,14 +10,14 @@ export const INITIAL_FALLBACK_DATA = {
     name: "NEXT IAS Umang 2026",
     edition: "Cricket Tournament • Sports & Inspiration Meet",
     matchDate: "25th October 2026",
-    timeSlot: "09:00 AM – 11:00 AM",
-    matchFormat: "10 Overs per match (T10)",
-    pitches: 4,
+    timeSlot: "09:00 AM – 11:15 AM",
+    matchFormat: "8 Overs per inning (T8)",
+    pitches: 3,
     simultaneousMatches: true,
-    venue: "NEXT IAS Sports Complex (Pitches 1, 2, 3, 4), New Delhi",
+    venue: "NEXT IAS Sports Complex (Pitches 1, 2, 3), New Delhi",
     organizerPin: "NEXTIAS2610",
     telegramGroupUrl: "https://t.me/+MgD-vhGBGSgzOWI9",
-    totalExpectedPlayers: 84,
+    totalExpectedPlayers: 64,
     rosterSlotsPerTeam: 10,
     reservePoolCapacity: 4
   },
@@ -107,26 +107,6 @@ export const INITIAL_FALLBACK_DATA = {
       players: [
         { id: "p-cap-6", name: "Satyam", rollNo: "CAPT-06", role: "bowlingAllRounder", isWicketKeeper: false, battingStyle: "Right Hand", bowlingStyle: "Left-arm Orthodox", mobile: "9219832109", isCaptain: true, attendance: "Confirmed", teamId: "team-6" }
       ]
-    },
-    {
-      id: "team-7",
-      name: "Old Rajinder Mavericks",
-      shortName: "MAVERICKS",
-      tagline: "Midnight Revisions & Matchwinners",
-      color: "from-rose-600 to-pink-950",
-      accentColor: "#E11D48",
-      captainName: "TBA (To be announced)",
-      players: []
-    },
-    {
-      id: "team-8",
-      name: "Prelims Powerhitters",
-      shortName: "POWERHITTERS",
-      tagline: "Clearing Cut-offs & Clearing Boundaries",
-      color: "from-orange-600 to-amber-900",
-      accentColor: "#EA580C",
-      captainName: "TBA (To be announced)",
-      players: []
     }
   ],
   reservePool: [],
@@ -134,133 +114,95 @@ export const INITIAL_FALLBACK_DATA = {
     {
       id: "m-1",
       matchNumber: 1,
-      round: "Quarter-Final 1",
-      stage: "QF",
+      round: "Round 1 (Eliminator 1)",
+      stage: "ROUND_1",
       team1Id: "team-1",
       team1Name: "NEXT IAS Titans",
       team2Id: "team-2",
       team2Name: "Rajinder Nagar Royals",
-      dateTime: "25 Oct 2026 • 09:00 AM – 09:40 AM",
-      venue: "Pitch 1 (Simultaneous T10)",
+      dateTime: "25 Oct 2026 • 09:00 AM – 09:45 AM",
+      venue: "Pitch 1 (Simultaneous T8)",
       status: "Upcoming",
       winnerTeamId: null,
       winnerTeamName: null,
       scores: { team1: "", team2: "" },
-      summary: "10-Over Match (T10) • Winner advances to Semi-Final 1",
-      nextMatchId: "m-5",
-      nextSlot: "team1"
+      summary: "8 Overs per Inning (T8) • Direct Knockout Match",
+      nextMatchId: null,
+      nextSlot: null
     },
     {
       id: "m-2",
       matchNumber: 2,
-      round: "Quarter-Final 2",
-      stage: "QF",
+      round: "Round 1 (Eliminator 2)",
+      stage: "ROUND_1",
       team1Id: "team-3",
       team1Name: "Karol Bagh Kings",
       team2Id: "team-4",
       team2Name: "Civil Service Strikers",
-      dateTime: "25 Oct 2026 • 09:00 AM – 09:40 AM",
-      venue: "Pitch 2 (Simultaneous T10)",
+      dateTime: "25 Oct 2026 • 09:00 AM – 09:45 AM",
+      venue: "Pitch 2 (Simultaneous T8)",
       status: "Upcoming",
       winnerTeamId: null,
       winnerTeamName: null,
       scores: { team1: "", team2: "" },
-      summary: "10-Over Match (T10) • Winner advances to Semi-Final 1",
-      nextMatchId: "m-5",
-      nextSlot: "team2"
+      summary: "8 Overs per Inning (T8) • Direct Knockout Match",
+      nextMatchId: null,
+      nextSlot: null
     },
     {
       id: "m-3",
       matchNumber: 3,
-      round: "Quarter-Final 3",
-      stage: "QF",
+      round: "Round 1 (Eliminator 3)",
+      stage: "ROUND_1",
       team1Id: "team-5",
       team1Name: "CSAT Crusaders",
       team2Id: "team-6",
       team2Name: "LBSNAA Challengers",
-      dateTime: "25 Oct 2026 • 09:00 AM – 09:40 AM",
-      venue: "Pitch 3 (Simultaneous T10)",
+      dateTime: "25 Oct 2026 • 09:00 AM – 09:45 AM",
+      venue: "Pitch 3 (Simultaneous T8)",
       status: "Upcoming",
       winnerTeamId: null,
       winnerTeamName: null,
       scores: { team1: "", team2: "" },
-      summary: "10-Over Match (T10) • Winner advances to Semi-Final 2",
-      nextMatchId: "m-6",
-      nextSlot: "team1"
+      summary: "8 Overs per Inning (T8) • Direct Knockout Match",
+      nextMatchId: null,
+      nextSlot: null
     },
     {
       id: "m-4",
       matchNumber: 4,
-      round: "Quarter-Final 4",
-      stage: "QF",
-      team1Id: "team-7",
-      team1Name: "Old Rajinder Mavericks",
-      team2Id: "team-8",
-      team2Name: "Prelims Powerhitters",
-      dateTime: "25 Oct 2026 • 09:00 AM – 09:40 AM",
-      venue: "Pitch 4 (Simultaneous T10)",
-      status: "Upcoming",
-      winnerTeamId: null,
-      winnerTeamName: null,
-      scores: { team1: "", team2: "" },
-      summary: "10-Over Match (T10) • Winner advances to Semi-Final 2",
-      nextMatchId: "m-6",
-      nextSlot: "team2"
-    },
-    {
-      id: "m-5",
-      matchNumber: 5,
-      round: "Semi-Final 1",
+      round: "Semi-Final (Qualifier 2)",
       stage: "SF",
       team1Id: null,
-      team1Name: "Winner QF 1",
+      team1Name: "Winner R1 (Slot 1)",
       team2Id: null,
-      team2Name: "Winner QF 2",
-      dateTime: "25 Oct 2026 • 09:45 AM – 10:20 AM",
-      venue: "Pitch 1 (Simultaneous T10)",
-      status: "Upcoming",
-      winnerTeamId: null,
-      winnerTeamName: null,
-      scores: { team1: "", team2: "" },
-      summary: "10-Over Match (T10) • Winner qualifies for Grand Finale",
-      nextMatchId: "m-7",
-      nextSlot: "team1"
-    },
-    {
-      id: "m-6",
-      matchNumber: 6,
-      round: "Semi-Final 2",
-      stage: "SF",
-      team1Id: null,
-      team1Name: "Winner QF 3",
-      team2Id: null,
-      team2Name: "Winner QF 4",
-      dateTime: "25 Oct 2026 • 09:45 AM – 10:20 AM",
-      venue: "Pitch 2 (Simultaneous T10)",
-      status: "Upcoming",
-      winnerTeamId: null,
-      winnerTeamName: null,
-      scores: { team1: "", team2: "" },
-      summary: "10-Over Match (T10) • Winner qualifies for Grand Finale",
-      nextMatchId: "m-7",
-      nextSlot: "team2"
-    },
-    {
-      id: "m-7",
-      matchNumber: 7,
-      round: "Grand Finale 🏆",
-      stage: "FINAL",
-      team1Id: null,
-      team1Name: "Winner SF 1",
-      team2Id: null,
-      team2Name: "Winner SF 2",
-      dateTime: "25 Oct 2026 • 10:25 AM – 11:00 AM",
+      team2Name: "Winner R1 (Slot 2)",
+      dateTime: "25 Oct 2026 • 09:50 AM – 10:30 AM",
       venue: "Pitch 1 (Championship Pitch)",
       status: "Upcoming",
       winnerTeamId: null,
       winnerTeamName: null,
       scores: { team1: "", team2: "" },
-      summary: "10-Over Championship Final (T10) • Trophy Presentation at 11:00 AM",
+      summary: "8 Overs per Inning (T8) • Winner advances to Grand Finale against Direct Finalist",
+      nextMatchId: "m-5",
+      nextSlot: "team2"
+    },
+    {
+      id: "m-5",
+      matchNumber: 5,
+      round: "Grand Finale 🏆",
+      stage: "FINAL",
+      team1Id: null,
+      team1Name: "Direct Finalist (Highest Margin R1 Winner)",
+      team2Id: null,
+      team2Name: "Winner Semi-Final (Match 4)",
+      dateTime: "25 Oct 2026 • 10:35 AM – 11:15 AM",
+      venue: "Pitch 1 (Championship Pitch)",
+      status: "Upcoming",
+      winnerTeamId: null,
+      winnerTeamName: null,
+      scores: { team1: "", team2: "" },
+      summary: "8-Over Championship Final (T8) • Winner crowned Tournament Champion!",
       nextMatchId: null,
       nextSlot: null
     }
@@ -379,8 +321,15 @@ function getLocalData() {
     try {
       const parsed = JSON.parse(local);
       if (parsed && parsed.teams && parsed.teams.length > 0) {
-        if (!parsed.fixtures || parsed.fixtures.length === 0) {
+        // Purge team-7 and team-8 from local caches
+        parsed.teams = (parsed.teams || []).filter(t => t.id !== 'team-7' && t.id !== 'team-8');
+        if (!parsed.fixtures || parsed.fixtures.length !== 5) {
           parsed.fixtures = INITIAL_FALLBACK_DATA.fixtures;
+        }
+        if (parsed.tournament) {
+          parsed.tournament.matchFormat = "8 Overs per inning (T8)";
+          parsed.tournament.pitches = 3;
+          parsed.tournament.totalSlotsAcrossTeams = parsed.teams.length * 10;
         }
         // Ensure CSAT Crusaders rename takes effect in existing caches
         const team5 = parsed.teams.find(t => t.id === 'team-5');
@@ -388,10 +337,6 @@ function getLocalData() {
           team5.name = 'CSAT Crusaders';
           team5.shortName = 'CRUSADERS';
           team5.tagline = 'High Aptitude & Fearless Boundaries';
-        }
-        const qf3 = parsed.fixtures.find(f => f.id === 'm-3');
-        if (qf3 && qf3.team1Name && qf3.team1Name.includes('Dholpur')) {
-          qf3.team1Name = 'CSAT Crusaders';
         }
         return parsed;
       }
@@ -461,8 +406,11 @@ async function fetchFirebaseRaw() {
     team5.tagline = 'High Aptitude & Fearless Boundaries';
   }
 
-  // Ensure fixtures exist
-  if (!cloudData.fixtures || cloudData.fixtures.length === 0) {
+  // Purge vacant teams
+  cloudData.teams = (cloudData.teams || []).filter(t => t.id !== 'team-7' && t.id !== 'team-8');
+
+  // Ensure fixtures exist (must be 5 knockout matches)
+  if (!cloudData.fixtures || cloudData.fixtures.length !== 5) {
     cloudData.fixtures = INITIAL_FALLBACK_DATA.fixtures;
   }
 
@@ -558,7 +506,7 @@ function formatSanitizedData(data) {
       totalAssignedPlayers,
       totalReserve: sanitizedReserve.length,
       totalRegistered: totalAssignedPlayers + sanitizedReserve.length,
-      totalSlotsAcrossTeams: 80
+      totalSlotsAcrossTeams: sanitizedTeams.length * 10
     },
     teams: sanitizedTeams,
     reservePool: sanitizedReserve,
@@ -605,6 +553,38 @@ function advanceKnockoutFixtures(fixtures, teams) {
       }
     }
   }
+
+  // Knockout Qualification Logic:
+  // Round 1 matches (m-1, m-2, m-3)
+  const m1 = fixtures.find(f => f.id === 'm-1');
+  const m2 = fixtures.find(f => f.id === 'm-2');
+  const m3 = fixtures.find(f => f.id === 'm-3');
+  const m4 = fixtures.find(f => f.id === 'm-4');
+  const m5 = fixtures.find(f => f.id === 'm-5');
+
+  const r1Matches = [m1, m2, m3].filter(Boolean);
+  const r1Winners = r1Matches.filter(m => Boolean(m.winnerTeamId)).map(m => {
+    const t = teams.find(item => item.id === m.winnerTeamId);
+    return {
+      teamId: m.winnerTeamId,
+      teamName: t ? t.name : m.winnerTeamName || (m.winnerTeamId === m.team1Id ? m.team1Name : m.team2Name),
+      matchNumber: m.matchNumber
+    };
+  });
+
+  // If a direct finalist is chosen in m-5 (slot 1)
+  if (m5 && m4 && m5.team1Id) {
+    const remaining = r1Winners.filter(w => w.teamId !== m5.team1Id);
+    if (remaining.length >= 1 && (!m4.team1Id || m4.team1Id === m5.team1Id)) {
+      m4.team1Id = remaining[0].teamId;
+      m4.team1Name = remaining[0].teamName;
+    }
+    if (remaining.length >= 2 && (!m4.team2Id || m4.team2Id === m5.team1Id)) {
+      m4.team2Id = remaining[1].teamId;
+      m4.team2Name = remaining[1].teamName;
+    }
+  }
+
   return fixtures;
 }
 
@@ -1126,6 +1106,15 @@ export const api = {
       if (matchPayload.scores) match.scores = { ...match.scores, ...matchPayload.scores };
       if (matchPayload.summary !== undefined) match.summary = matchPayload.summary;
 
+      if (matchPayload.team1Id !== undefined) {
+        match.team1Id = matchPayload.team1Id || null;
+        if (matchPayload.team1Name !== undefined) match.team1Name = matchPayload.team1Name;
+      }
+      if (matchPayload.team2Id !== undefined) {
+        match.team2Id = matchPayload.team2Id || null;
+        if (matchPayload.team2Name !== undefined) match.team2Name = matchPayload.team2Name;
+      }
+
       if (matchPayload.winnerTeamId !== undefined) {
         if (matchPayload.winnerTeamId) {
           match.winnerTeamId = matchPayload.winnerTeamId;
@@ -1181,6 +1170,15 @@ export const api = {
     if (matchPayload.scores) match.scores = { ...match.scores, ...matchPayload.scores };
     if (matchPayload.summary !== undefined) match.summary = matchPayload.summary;
 
+    if (matchPayload.team1Id !== undefined) {
+      match.team1Id = matchPayload.team1Id || null;
+      if (matchPayload.team1Name !== undefined) match.team1Name = matchPayload.team1Name;
+    }
+    if (matchPayload.team2Id !== undefined) {
+      match.team2Id = matchPayload.team2Id || null;
+      if (matchPayload.team2Name !== undefined) match.team2Name = matchPayload.team2Name;
+    }
+
     if (matchPayload.winnerTeamId !== undefined) {
       if (matchPayload.winnerTeamId) {
         match.winnerTeamId = matchPayload.winnerTeamId;
@@ -1195,6 +1193,65 @@ export const api = {
 
     data.fixtures = advanceKnockoutFixtures(data.fixtures, data.teams || []);
     saveLocalData(data);
+    return { success: true, fixtures: data.fixtures };
+  },
+
+  // Designate Highest Margin Round 1 Winner as Direct Finalist in Grand Finale (m-5)
+  // and advance remaining 2 Round 1 winners to Semi-Final (m-4)
+  async designateHighestMarginWinner(pin, finalistTeamId) {
+    const config = getActiveCloudConfig();
+    let data;
+    if (config.isConfigured && config.type === 'firebase') {
+      data = await fetchFirebaseRaw();
+    } else {
+      data = getLocalData();
+    }
+    if (!data) data = getLocalData();
+
+    data.fixtures = data.fixtures || INITIAL_FALLBACK_DATA.fixtures;
+    const m1 = data.fixtures.find(f => f.id === 'm-1');
+    const m2 = data.fixtures.find(f => f.id === 'm-2');
+    const m3 = data.fixtures.find(f => f.id === 'm-3');
+    const m4 = data.fixtures.find(f => f.id === 'm-4');
+    const m5 = data.fixtures.find(f => f.id === 'm-5');
+
+    const r1Matches = [m1, m2, m3].filter(Boolean);
+    const r1Winners = r1Matches.filter(m => Boolean(m.winnerTeamId)).map(m => {
+      const t = (data.teams || []).find(item => item.id === m.winnerTeamId);
+      return {
+        teamId: m.winnerTeamId,
+        teamName: t ? t.name : m.winnerTeamName || (m.winnerTeamId === m.team1Id ? m.team1Name : m.team2Name)
+      };
+    });
+
+    const finalistTeam = (data.teams || []).find(t => t.id === finalistTeamId);
+    const finalistName = finalistTeam ? `${finalistTeam.name} ⭐ (Direct Finalist)` : 'Direct Finalist';
+
+    if (m5) {
+      m5.team1Id = finalistTeamId;
+      m5.team1Name = finalistName;
+    }
+
+    const remaining = r1Winners.filter(w => w.teamId !== finalistTeamId);
+    if (m4) {
+      if (remaining[0]) {
+        m4.team1Id = remaining[0].teamId;
+        m4.team1Name = remaining[0].teamName;
+      }
+      if (remaining[1]) {
+        m4.team2Id = remaining[1].teamId;
+        m4.team2Name = remaining[1].teamName;
+      }
+    }
+
+    data.fixtures = advanceKnockoutFixtures(data.fixtures, data.teams || []);
+
+    if (config.isConfigured && config.type === 'firebase') {
+      await saveFirebaseRaw(data);
+    } else {
+      saveLocalData(data);
+    }
+
     return { success: true, fixtures: data.fixtures };
   },
 

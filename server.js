@@ -62,7 +62,7 @@ app.get('/api/public-data', (req, res) => {
   const data = readData();
 
   // Strip confidential phone/whatsapp numbers before sending to public clients
-  const sanitizedTeams = data.teams.map(team => {
+  const sanitizedTeams = (data.teams || []).filter(t => t.id !== 'team-7' && t.id !== 'team-8').map(team => {
     const stats = getTeamStats(team);
     return {
       id: team.id,
@@ -111,12 +111,12 @@ app.get('/api/public-data', (req, res) => {
       edition: data.tournament.edition,
       venue: data.tournament.venue,
       telegramGroupUrl: data.tournament.telegramGroupUrl,
-      totalExpectedPlayers: data.tournament.totalExpectedPlayers || 84,
+      totalExpectedPlayers: data.tournament.totalExpectedPlayers || 64,
       totalAssignedPlayers,
       totalReserve,
       totalRegistered: totalAssignedPlayers + totalReserve,
       rosterSlotsPerTeam: 10,
-      totalSlotsAcrossTeams: 80,
+      totalSlotsAcrossTeams: sanitizedTeams.length * 10,
       reserveCapacity: data.tournament.reservePoolCapacity || 12
     },
     teams: sanitizedTeams,

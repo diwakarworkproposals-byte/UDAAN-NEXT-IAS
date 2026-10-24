@@ -116,6 +116,10 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
       await api.updateMatch(pin, {
         matchId,
         status: form.status,
+        team1Id: form.team1Id,
+        team1Name: form.team1Name,
+        team2Id: form.team2Id,
+        team2Name: form.team2Name,
         winnerTeamId: form.winnerTeamId || null,
         scores: {
           team1: form.team1Score,
@@ -131,6 +135,21 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
       if (onDataChanged) onDataChanged();
     } catch (err) {
       alert(`Error updating match: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDesignateDirectFinalist = async (teamId) => {
+    try {
+      setLoading(true);
+      await api.designateHighestMarginWinner(pin, teamId);
+      setActionSuccessMessage('Highest margin qualifier set! Grand Finale and Semi-Final brackets updated.');
+      setTimeout(() => setActionSuccessMessage(''), 4500);
+      await loadAdminData(pin);
+      if (onDataChanged) onDataChanged();
+    } catch (err) {
+      alert(`Error designating direct finalist: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -309,7 +328,7 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
       return;
     }
 
-    if (!window.confirm("Initialize Cloud Database with official baseline rosters (8 captains, empty squads, and 7 knockout fixtures)?")) {
+    if (!window.confirm("Initialize Cloud Database with official baseline rosters (6 captains, squads, and 5 knockout fixtures)?")) {
       return;
     }
 
@@ -774,8 +793,74 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
                 <div className="bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-2xl text-xs flex items-start gap-2.5">
                   <Info className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-bold">Knockout Progression Engine: </span>
-                    Mark the winning team for any completed match. Winners will be automatically placed into the next Semi-Final and Grand Finale slots across all candidate &amp; public screens!
+                    <span className="font-bold">6-Team Knockout Progression Engine (8 Overs per Inning): </span>
+                    Round 1 consists of 3 direct knockout matches. The team winning with the <strong>highest margin directly qualifies for the Grand Finale</strong>! The remaining 2 winning teams contest the <strong>Semi-Final</strong>, whose winner faces the direct finalist.
+                  </div>
+                </div>
+
+                {/* Highest Margin Qualifier Helper Tool */}
+                <div className="bg-gradient-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/15 border-2 border-amber-300 rounded-3xl p-4 sm:p-5 text-slate-900 shadow-2xs space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-800 tracking-wider">
+                        <Sparkles className="w-4 h-4 text-amber-600" />
+                        <span>Highest Margin Direct Finalist Qualifier</span>
+                      </div>
+                      <p className="text-xs text-slate-600 mt-1">
+                        Declare Round 1 winners below. Designate the team with the highest victory margin as the <strong>Direct Finalist</strong> to automatically populate the Grand Finale and Semi-Final brackets!
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Round 1 Winners Status */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                    {[1, 2, 3].map(matchNum => {
+                      const match = (adminData?.fixtures || []).find(m => m.matchNumber === matchNum);
+                      const isWinnerDeclared = match && Boolean(match.winnerTeamId);
+                      const isDirectFinalist = adminData?.fixtures?.find(m => m.id === 'm-5')?.team1Id === match?.winnerTeamId && isWinnerDeclared;
+
+                      return (
+                        <div key={matchNum} className="p-3 bg-white rounded-2xl border border-amber-200 shadow-2xs space-y-2">
+                          <div className="flex items-center justify-between text-[11px] font-bold text-slate-500">
+                            <span>Match {matchNum} Winner</span>
+                            {isWinnerDeclared ? (
+                              <span className="text-emerald-700 font-extrabold text-[10px] bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Declared</span>
+                            ) : (
+                              <span className="text-slate-400 font-medium text-[10px]">Pending</span>
+                            )}
+                          </div>
+
+                          <div className="text-xs font-black text-slate-900 truncate">
+                            {isWinnerDeclared ? match.winnerTeamName : 'Awaiting result...'}
+                          </div>
+
+                          {match?.summary && (
+                            <div className="text-[10px] text-slate-500 italic truncate">
+                              {match.summary}
+                            </div>
+                          )}
+
+                          {isWinnerDeclared && (
+                            <button
+                              type="button"
+                              disabled={loading || isDirectFinalist}
+                              onClick={() => handleDesignateDirectFinalist(match.winnerTeamId)}
+                              className={`w-full py-1.5 px-2 rounded-xl text-[11px] font-bold transition flex items-center justify-center gap-1 ${
+                                isDirectFinalist
+                                  ? 'bg-amber-400 text-amber-950 font-black cursor-default shadow-2xs'
+                                  : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
+                              }`}
+                            >
+                              {isDirectFinalist ? (
+                                <>⭐ Direct Finalist Set</>
+                              ) : (
+                                <>👑 Set as Highest Margin</>
+                              )}
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -807,15 +892,61 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
                           </select>
                         </div>
 
+                        {/* Manual Team Selector for Playoff / Final Matches if needed */}
+                        {(match.id === 'm-4' || match.id === 'm-5') && (
+                          <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
+                            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                              Assigned Squads (Click to override):
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <label className="text-[10px] text-slate-600 block mb-0.5">Team 1 Slot:</label>
+                                <select
+                                  value={form.team1Id !== undefined ? form.team1Id : (match.team1Id || '')}
+                                  onChange={(e) => {
+                                    const selected = (adminData?.teams || []).find(t => t.id === e.target.value);
+                                    handleUpdateMatchField(match.id, 'team1Id', e.target.value);
+                                    handleUpdateMatchField(match.id, 'team1Name', selected ? selected.name : '');
+                                  }}
+                                  className="w-full text-[11px] px-2 py-1 rounded-lg border border-slate-300 bg-white font-semibold outline-none truncate"
+                                >
+                                  <option value="">{match.team1Name || 'Select Team 1...'}</option>
+                                  {(adminData?.teams || []).map(t => (
+                                    <option key={t.id} value={t.id}>{t.name}</option>
+                                  ))}
+                                </select>
+                              </div>
+
+                              <div>
+                                <label className="text-[10px] text-slate-600 block mb-0.5">Team 2 Slot:</label>
+                                <select
+                                  value={form.team2Id !== undefined ? form.team2Id : (match.team2Id || '')}
+                                  onChange={(e) => {
+                                    const selected = (adminData?.teams || []).find(t => t.id === e.target.value);
+                                    handleUpdateMatchField(match.id, 'team2Id', e.target.value);
+                                    handleUpdateMatchField(match.id, 'team2Name', selected ? selected.name : '');
+                                  }}
+                                  className="w-full text-[11px] px-2 py-1 rounded-lg border border-slate-300 bg-white font-semibold outline-none truncate"
+                                >
+                                  <option value="">{match.team2Name || 'Select Team 2...'}</option>
+                                  {(adminData?.teams || []).map(t => (
+                                    <option key={t.id} value={t.id}>{t.name}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
                         {/* Team 1 Score & Winner Toggle */}
                         <div className="p-3 bg-slate-50 rounded-xl space-y-2 border border-slate-100">
                           <div className="flex items-center justify-between gap-2">
                             <span className="text-xs font-black text-slate-900 truncate">
-                              {match.team1Name || 'TBD (Winner QF)'}
+                              {form.team1Name || match.team1Name || 'TBD (Winner QF)'}
                             </span>
                             <input
                               type="text"
-                              placeholder="Score (e.g., 94/3 (10 ov))"
+                              placeholder="Score (e.g., 74/3 (8 ov))"
                               value={form.team1Score}
                               onChange={(e) => handleUpdateMatchField(match.id, 'team1Score', e.target.value)}
                               className="w-36 text-xs px-2 py-1 rounded-lg border border-slate-300 bg-white focus:ring-1 focus:ring-brand-navy outline-none"
@@ -824,11 +955,11 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
 
                           <div className="flex items-center justify-between gap-2">
                             <span className="text-xs font-black text-slate-900 truncate">
-                              {match.team2Name || 'TBD (Winner QF)'}
+                              {form.team2Name || match.team2Name || 'TBD (Winner QF)'}
                             </span>
                             <input
                               type="text"
-                              placeholder="Score (e.g., 88/6 (10 ov))"
+                              placeholder="Score (e.g., 68/6 (8 ov))"
                               value={form.team2Score}
                               onChange={(e) => handleUpdateMatchField(match.id, 'team2Score', e.target.value)}
                               className="w-36 text-xs px-2 py-1 rounded-lg border border-slate-300 bg-white focus:ring-1 focus:ring-brand-navy outline-none"

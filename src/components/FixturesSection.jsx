@@ -14,7 +14,7 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
   };
 
   // Find Grand Finale champion if available
-  const finalMatch = fixtures.find(f => f.stage === 'FINAL' || f.id === 'm-7');
+  const finalMatch = fixtures.find(f => f.stage === 'FINAL' || f.id === 'm-5' || f.id === 'm-7');
   const championTeam = finalMatch && finalMatch.winnerTeamId ? getTeamInfo(finalMatch.winnerTeamId, finalMatch.winnerTeamName) : null;
 
   // Filtered fixtures
@@ -79,19 +79,19 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-sky-50 text-sky-800 font-bold text-xs border border-sky-200">
               <Clock className="w-3.5 h-3.5" />
-              <span>09:00 AM – 11:00 AM</span>
+              <span>09:00 AM – 11:15 AM</span>
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 text-amber-800 font-bold text-xs border border-amber-200">
               <Zap className="w-3.5 h-3.5" />
-              <span>10-Over Matches (T10)</span>
+              <span>8 Overs per Inning (T8)</span>
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-800 font-bold text-xs border border-emerald-200">
               <MapPin className="w-3.5 h-3.5" />
-              <span>4 Pitches Simultaneous (P1, P2, P3, P4)</span>
+              <span>3 Pitches Simultaneous (P1, P2, P3)</span>
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-2">
-            All 4 Quarter-Finals kick off simultaneously at 09:00 AM across 4 pitches. Semi-Finals at 09:45 AM, followed by the Grand Finale on Pitch 1!
+            6 Teams • All Knockout Matches • 8 Overs per Inning (T8). Round 1 winners qualify: the team with the <strong>highest victory margin directly qualifies for the Grand Finale</strong>! The other two winners clash in the Semi-Final.
           </p>
         </div>
 
@@ -365,21 +365,22 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                 Tournament Knockout Progression Tree
               </h3>
               <p className="text-xs text-slate-500">
-                Quarter-Finals ➔ Semi-Finals ➔ Grand Finale ➔ Champion
+                Round 1 (3 Knockouts) ➔ Highest Margin Qualifier &amp; Semi-Final ➔ Grand Finale ➔ Champion
               </p>
             </div>
 
             <div className="grid grid-cols-3 gap-8 relative">
               
-              {/* Column 1: Quarter-Finals (4 Matches) */}
+              {/* Column 1: Round 1 (3 Matches) */}
               <div className="space-y-4">
                 <div className="text-center pb-2 border-b border-slate-200">
                   <span className="text-xs font-black uppercase tracking-wider text-slate-700">
-                    Quarter-Finals (Round of 8)
+                    Round 1 (3 Knockout Clashes)
                   </span>
+                  <span className="text-[10px] text-slate-400 block">Pitches 1, 2, 3 Simultaneous</span>
                 </div>
 
-                {fixtures.filter(m => m.stage === 'QF').map(m => (
+                {fixtures.filter(m => m.stage === 'ROUND_1' || m.stage === 'QF').map(m => (
                   <div
                     key={m.id}
                     className={`p-3 rounded-2xl border text-xs space-y-1.5 shadow-sm ${
@@ -413,14 +414,33 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                 ))}
               </div>
 
-              {/* Column 2: Semi-Finals (2 Matches) */}
-              <div className="space-y-12 flex flex-col justify-center">
+              {/* Column 2: Playoff & Direct Finalist */}
+              <div className="space-y-6 flex flex-col justify-center">
                 <div className="text-center pb-2 border-b border-slate-200">
                   <span className="text-xs font-black uppercase tracking-wider text-slate-700">
-                    Semi-Finals (Round of 4)
+                    Semi-Final &amp; Direct Qualifier
                   </span>
+                  <span className="text-[10px] text-slate-400 block">Highest Margin Winner bypasses to Final</span>
                 </div>
 
+                {/* Direct Finalist Highlight Box */}
+                <div className="p-3.5 rounded-2xl border-2 border-amber-300 bg-gradient-to-br from-amber-50 to-yellow-50 text-xs space-y-2 shadow-2xs">
+                  <div className="flex items-center justify-between text-[10px] font-black uppercase text-amber-900">
+                    <span className="flex items-center gap-1">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Direct Finalist Bye</span>
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded bg-amber-200 text-amber-950 font-extrabold text-[9px]">Highest Margin</span>
+                  </div>
+                  <div className="p-2 bg-white rounded-xl border border-amber-200 text-slate-900 font-black truncate">
+                    {fixtures.find(m => m.id === 'm-5')?.team1Name || 'Direct Finalist (Highest Margin R1 Winner)'}
+                  </div>
+                  <div className="text-[10px] text-amber-800 font-semibold">
+                    ⭐ Direct entry into Grand Finale (Match 5)
+                  </div>
+                </div>
+
+                {/* Semi-Final Match */}
                 {fixtures.filter(m => m.stage === 'SF').map(m => (
                   <div
                     key={m.id}
@@ -441,14 +461,14 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                     <div className={`p-2 rounded-lg flex items-center justify-between font-bold ${
                       Boolean(m.winnerTeamId) && m.winnerTeamId === m.team1Id ? 'bg-amber-100 text-amber-950 font-black' : 'text-slate-800'
                     }`}>
-                      <span className="truncate max-w-[150px]">{m.team1Name || 'Winner QF'}</span>
+                      <span className="truncate max-w-[150px]">{m.team1Name || 'Winner R1'}</span>
                       <span className="font-mono text-[11px]">{m.scores?.team1 || ''}</span>
                     </div>
 
                     <div className={`p-2 rounded-lg flex items-center justify-between font-bold ${
                       Boolean(m.winnerTeamId) && m.winnerTeamId === m.team2Id ? 'bg-amber-100 text-amber-950 font-black' : 'text-slate-800'
                     }`}>
-                      <span className="truncate max-w-[150px]">{m.team2Name || 'Winner QF'}</span>
+                      <span className="truncate max-w-[150px]">{m.team2Name || 'Winner R1'}</span>
                       <span className="font-mono text-[11px]">{m.scores?.team2 || ''}</span>
                     </div>
                   </div>
@@ -461,6 +481,7 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                   <span className="text-xs font-black uppercase tracking-wider text-amber-800">
                     Grand Finale (Championship)
                   </span>
+                  <span className="text-[10px] text-slate-400 block">Pitch 1 (Trophy Clash)</span>
                 </div>
 
                 {fixtures.filter(m => m.stage === 'FINAL').map(m => (
@@ -471,7 +492,7 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                     <div className="flex items-center justify-between text-xs font-black text-amber-950">
                       <span className="flex items-center gap-1">
                         <Trophy className="w-4 h-4 text-amber-600" />
-                        <span>Grand Finale (Match 7)</span>
+                        <span>Grand Finale (Match {m.matchNumber})</span>
                       </span>
                       {m.status === 'Completed' && <span className="text-emerald-700">✓ Finished</span>}
                       {m.status === 'Ongoing' && <span className="text-rose-600 animate-pulse">● LIVE</span>}
@@ -480,7 +501,7 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                     <div className={`p-2.5 rounded-xl flex items-center justify-between font-bold border ${
                       Boolean(m.winnerTeamId) && m.winnerTeamId === m.team1Id ? 'bg-amber-100 border-amber-300 text-amber-950 font-black' : 'bg-white border-slate-200 text-slate-800'
                     }`}>
-                      <span className="truncate max-w-[160px]">{m.team1Name || 'Winner SF 1'}</span>
+                      <span className="truncate max-w-[160px]">{m.team1Name || 'Direct Finalist'}</span>
                       <span className="font-mono text-xs">{m.scores?.team1 || ''}</span>
                     </div>
 
@@ -489,7 +510,7 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                     <div className={`p-2.5 rounded-xl flex items-center justify-between font-bold border ${
                       Boolean(m.winnerTeamId) && m.winnerTeamId === m.team2Id ? 'bg-amber-100 border-amber-300 text-amber-950 font-black' : 'bg-white border-slate-200 text-slate-800'
                     }`}>
-                      <span className="truncate max-w-[160px]">{m.team2Name || 'Winner SF 2'}</span>
+                      <span className="truncate max-w-[160px]">{m.team2Name || 'Winner Semi-Final'}</span>
                       <span className="font-mono text-xs">{m.scores?.team2 || ''}</span>
                     </div>
 
