@@ -219,7 +219,7 @@ export default function App() {
               }`}
             >
               <span>🏆 Fixtures &amp; Results ({data.fixtures?.length || 5})</span>
-              {(data.fixtures || []).some(m => m.status === 'Live') && (
+              {(data.fixtures || []).some(m => m.status === 'Live' || m.status === 'Ongoing') && (
                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
               )}
             </button>

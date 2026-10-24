@@ -56,7 +56,11 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
           winnerTeamId: m.winnerTeamId || '',
           team1Score: m.scores?.team1 || '',
           team2Score: m.scores?.team2 || '',
-          summary: m.summary || ''
+          summary: m.summary || '',
+          team1Id: m.team1Id || '',
+          team1Name: m.team1Name || '',
+          team2Id: m.team2Id || '',
+          team2Name: m.team2Name || ''
         };
       });
       setMatchForms(forms);
@@ -882,12 +886,12 @@ export default function AdminDashboard({ isOpen, onClose, teams, reservePool, on
                         <div className="flex items-center justify-between text-xs">
                           <span className="font-bold text-slate-700">Status:</span>
                           <select
-                            value={form.status}
+                            value={form.status === 'Ongoing' ? 'Live' : (form.status || 'Upcoming')}
                             onChange={(e) => handleUpdateMatchField(match.id, 'status', e.target.value)}
                             className="px-2 py-1 rounded-lg border border-slate-300 font-semibold outline-none text-xs"
                           >
                             <option value="Upcoming">Upcoming</option>
-                            <option value="Live">🔴 Live / In Progress</option>
+                            <option value="Live">🔴 Live / Ongoing</option>
                             <option value="Completed">Completed</option>
                           </select>
                         </div>

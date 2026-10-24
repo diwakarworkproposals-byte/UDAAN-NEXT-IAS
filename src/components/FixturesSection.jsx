@@ -17,17 +17,22 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
   const finalMatch = fixtures.find(f => f.stage === 'FINAL' || f.id === 'm-5' || f.id === 'm-7');
   const championTeam = finalMatch && finalMatch.winnerTeamId ? getTeamInfo(finalMatch.winnerTeamId, finalMatch.winnerTeamName) : null;
 
+  // Status evaluation helpers that handle both 'Live' and 'Ongoing' robustly
+  const isMatchLive = (status) => status === 'Live' || status === 'Ongoing' || status === 'live';
+  const isMatchCompleted = (status) => status === 'Completed' || status === 'completed';
+  const isMatchUpcoming = (status) => !isMatchLive(status) && !isMatchCompleted(status);
+
   // Filtered fixtures
   const filteredFixtures = fixtures.filter(m => {
-    if (filter === 'LIVE') return m.status === 'Ongoing';
-    if (filter === 'UPCOMING') return m.status === 'Upcoming';
-    if (filter === 'COMPLETED') return m.status === 'Completed';
+    if (filter === 'LIVE') return isMatchLive(m.status);
+    if (filter === 'UPCOMING') return isMatchUpcoming(m.status);
+    if (filter === 'COMPLETED') return isMatchCompleted(m.status);
     return true;
   });
 
-  const liveMatchesCount = fixtures.filter(m => m.status === 'Ongoing').length;
-  const completedMatchesCount = fixtures.filter(m => m.status === 'Completed').length;
-  const upcomingMatchesCount = fixtures.filter(m => m.status === 'Upcoming').length;
+  const liveMatchesCount = fixtures.filter(m => isMatchLive(m.status)).length;
+  const completedMatchesCount = fixtures.filter(m => isMatchCompleted(m.status)).length;
+  const upcomingMatchesCount = fixtures.filter(m => isMatchUpcoming(m.status)).length;
 
   return (
     <div className="space-y-6">
@@ -180,8 +185,8 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
           {filteredFixtures.map((match) => {
             const team1 = getTeamInfo(match.team1Id, match.team1Name);
             const team2 = getTeamInfo(match.team2Id, match.team2Name);
-            const isCompleted = match.status === 'Completed';
-            const isLive = match.status === 'Ongoing';
+            const isCompleted = isMatchCompleted(match.status);
+            const isLive = isMatchLive(match.status);
 
             return (
               <div
@@ -384,17 +389,17 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                   <div
                     key={m.id}
                     className={`p-3 rounded-2xl border text-xs space-y-1.5 shadow-sm ${
-                      m.status === 'Completed'
+                      isMatchCompleted(m.status)
                         ? 'bg-slate-50 border-emerald-300'
-                        : m.status === 'Ongoing'
+                        : isMatchLive(m.status)
                         ? 'bg-rose-50 border-rose-300 ring-2 ring-rose-200'
                         : 'bg-white border-slate-200'
                     }`}
                   >
                     <div className="flex items-center justify-between text-[10px] font-bold text-slate-500">
                       <span>Match {m.matchNumber}: {m.round}</span>
-                      {m.status === 'Ongoing' && <span className="text-rose-600 font-extrabold animate-pulse">● LIVE</span>}
-                      {m.status === 'Completed' && <span className="text-emerald-700 font-extrabold">✓ Done</span>}
+                      {isMatchLive(m.status) && <span className="text-rose-600 font-extrabold animate-pulse">● LIVE</span>}
+                      {isMatchCompleted(m.status) && <span className="text-emerald-700 font-extrabold">✓ Done</span>}
                     </div>
 
                     <div className={`p-1.5 rounded-lg flex items-center justify-between font-bold ${
@@ -445,17 +450,17 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                   <div
                     key={m.id}
                     className={`p-3.5 rounded-2xl border text-xs space-y-2 shadow-sm ${
-                      m.status === 'Completed'
+                      isMatchCompleted(m.status)
                         ? 'bg-slate-50 border-emerald-300'
-                        : m.status === 'Ongoing'
+                        : isMatchLive(m.status)
                         ? 'bg-rose-50 border-rose-300 ring-2 ring-rose-200'
                         : 'bg-white border-slate-200'
                     }`}
                   >
                     <div className="flex items-center justify-between text-[10px] font-bold text-slate-500">
                       <span>Match {m.matchNumber}: {m.round}</span>
-                      {m.status === 'Ongoing' && <span className="text-rose-600 font-extrabold animate-pulse">● LIVE</span>}
-                      {m.status === 'Completed' && <span className="text-emerald-700 font-extrabold">✓ Done</span>}
+                      {isMatchLive(m.status) && <span className="text-rose-600 font-extrabold animate-pulse">● LIVE</span>}
+                      {isMatchCompleted(m.status) && <span className="text-emerald-700 font-extrabold">✓ Done</span>}
                     </div>
 
                     <div className={`p-2 rounded-lg flex items-center justify-between font-bold ${
@@ -494,8 +499,8 @@ export default function FixturesSection({ fixtures = [], teams = [] }) {
                         <Trophy className="w-4 h-4 text-amber-600" />
                         <span>Grand Finale (Match {m.matchNumber})</span>
                       </span>
-                      {m.status === 'Completed' && <span className="text-emerald-700">✓ Finished</span>}
-                      {m.status === 'Ongoing' && <span className="text-rose-600 animate-pulse">● LIVE</span>}
+                      {isMatchCompleted(m.status) && <span className="text-emerald-700">✓ Finished</span>}
+                      {isMatchLive(m.status) && <span className="text-rose-600 animate-pulse">● LIVE</span>}
                     </div>
 
                     <div className={`p-2.5 rounded-xl flex items-center justify-between font-bold border ${
